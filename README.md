@@ -1,0 +1,1 @@
+https://beginnerdevdiary.tistory.com/
