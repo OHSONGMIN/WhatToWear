@@ -1,11 +1,14 @@
 <template>
   Card........
-  Test...
+  {{item.name}}
 </template>
 
 <script>
 export default {
   name: "Card",
+  props: {
+    item: Object
+  }
 }
 </script>
 
