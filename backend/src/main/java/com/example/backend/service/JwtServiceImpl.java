@@ -43,7 +43,7 @@ public class JwtServiceImpl implements JwtService {
     @Override
     public Claims getClaims(String token) {
 
-        if (token != null || !"".equals(token)) {
+        if (token != null && !"".equals(token)) {
             try {
                 String base64EncodedSecretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
                 byte[] secretByteKey = Base64.getDecoder().decode(base64EncodedSecretKey);
