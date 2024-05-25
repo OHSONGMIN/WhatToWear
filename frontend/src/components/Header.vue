@@ -14,7 +14,7 @@
         <a to="/login" class="text-black" @click="logout()" v-else>로그아웃</a>
       </li>
     </div>
-    <router-link to="/cart" class="cart btn">
+    <router-link to="/cart" class="cart btn" v-if="$store.state.account.id">
       <i class="fa fa-shopping-cart" aria-hidden="true"></i>
     </router-link>
   </header>
