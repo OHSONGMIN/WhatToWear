@@ -11,6 +11,9 @@
         <a to="/login" class="text-black" @click="logout()" v-else>로그아웃</a>
       </li>
     </div>
+    <router-link to="/cart" class="cart btn">
+      <i class="fa fa-shopping-cart" aria-hidden="true"></i>
+    </router-link>
   </header>
 </template>
 
@@ -38,5 +41,8 @@ export default {
 <style scoped>
 header li a {
   cursor: pointer;
+}
+header .cart {
+  margin-left: auto;
 }
 </style>
