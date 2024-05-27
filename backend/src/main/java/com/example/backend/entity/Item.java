@@ -12,6 +12,9 @@ public class Item {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
+    @Column(nullable = false)
+    private int category;
+
     @Column(length = 50, nullable = false)
     private String name;
 }
