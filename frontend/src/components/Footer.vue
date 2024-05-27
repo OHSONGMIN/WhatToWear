@@ -1,5 +1,5 @@
 <template>
-This is Footer!!!
+  <footer>&copy;2024 Footer</footer>
 </template>
 
 <script>
@@ -8,7 +8,10 @@ export default {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-
+footer{
+  background:#f7f7f7;
+  border-top: 1px solid #eee;
+  padding:25px;
+}
 </style>
