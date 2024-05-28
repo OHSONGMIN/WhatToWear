@@ -2,10 +2,8 @@ package com.example.backend.controller;
 
 import com.example.backend.dto.OutfitDto;
 import com.example.backend.entity.Outfit;
-import com.example.backend.entity.OutfitItem;
 import com.example.backend.repository.OutfitRepository;
 import com.example.backend.service.JwtService;
-import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,9 +11,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 
-@Transactional
 @RestController
 public class OutfitController {
 
@@ -49,5 +47,14 @@ public class OutfitController {
         outfitRepository.save(newOutfit);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/api/outfits")
+    public ResponseEntity getOutfits() {
+
+        List<Outfit> outfits = outfitRepository.findAllOrderByIdDesc();
+
+        return new ResponseEntity<>(outfits, HttpStatus.OK);
+
     }
 }
