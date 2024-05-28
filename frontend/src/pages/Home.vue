@@ -1,6 +1,7 @@
 <template>
-  <div class="col" v-for="item in state.items" :key="item.id">
-    <Card :item="item"/> <!-- item이라는 이름으로 item객체를 전달-->
+  <div class="col" v-for="outfit in state.outfits" :key="outfit.id">
+    <Card :outfit="outfit" @deleted="load"/> <!-- outfit이라는 이름으로 outfit객체를 전달-->
+    <!-- Card 컴포넌트에서 발생한 deleted 이벤트를 수신 -->
   </div>
   <router-link to="/write" class="btn btn-primary">작성하기</router-link>
 </template>
@@ -15,14 +16,18 @@ export default {
   components: {Card},
   setup() {
     const state = reactive({
-      items: []
+      outfits: []
     })
 
-    axios.get("/api/outfits").then((res) => {
-      state.items = res.data;
-    })
+    const load = () => {
+      axios.get("/api/outfits").then((res) => {
+        state.outfits = res.data;
+      })
+    }
 
-    return {state}
+    load();
+
+    return {state, load}
   }
 }
 </script>
