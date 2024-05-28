@@ -1,6 +1,5 @@
 <template>
-  This is App.vue~~~~~~~~~
-  <div class="col" v-for="(item, idx) in state.items" :key="idx">
+  <div class="col" v-for="item in state.items" :key="item.id">
     <Card :item="item"/> <!-- item이라는 이름으로 item객체를 전달-->
   </div>
   <router-link to="/write" class="btn btn-primary">작성하기</router-link>
@@ -19,7 +18,7 @@ export default {
       items: []
     })
 
-    axios.get("/api/items").then((res) => {
+    axios.get("/api/outfits").then((res) => {
       state.items = res.data;
     })
 
