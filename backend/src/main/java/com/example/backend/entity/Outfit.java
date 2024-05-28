@@ -42,4 +42,7 @@ public class Outfit {
 
     @Column
     private int temperature;
+
+    @Column
+    private int delStatus;
 }

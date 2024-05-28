@@ -4,6 +4,9 @@ import com.example.backend.dto.OutfitDto;
 import com.example.backend.entity.Outfit;
 import com.example.backend.repository.OutfitRepository;
 import com.example.backend.service.JwtService;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
+import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -52,9 +55,24 @@ public class OutfitController {
     @GetMapping("/api/outfits")
     public ResponseEntity getOutfits() {
 
-        List<Outfit> outfits = outfitRepository.findAllOrderByIdDesc();
+        List<Outfit> outfits = outfitRepository.findOutfits();
 
         return new ResponseEntity<>(outfits, HttpStatus.OK);
+    }
 
+    @Transactional
+    @PatchMapping("/api/outfit/{outfitId}")
+    public ResponseEntity deleteOutfit (
+            @PathVariable("outfitId") int outfitId,
+            @CookieValue(value = "token", required = false) String token
+    ) {
+        if (!jwtService.isValid(token)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+
+        Outfit outfit = outfitRepository.findById(outfitId).orElseThrow(() -> new EntityNotFoundException("Outfit not found"));
+        outfit.setDelStatus(1);
+
+        return new ResponseEntity<>(HttpStatus.OK);
     }
 }
