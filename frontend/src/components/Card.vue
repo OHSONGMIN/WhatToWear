@@ -1,26 +1,31 @@
 <template>
-  {{item.regdate}}
-  {{item.overcoat}}
-  {{item.top}}
-  {{item.bottom}}
-  {{item.accessory}}
-  {{item.review}}
+  <div>
+    {{ outfit.regdate }}
+    {{ outfit.overcoat }}
+    {{ outfit.top }}
+    {{ outfit.bottom }}
+    {{ outfit.accessory }}
+    {{ outfit.review }}
+    <div v-if="$store.state.account.id === outfit.memberId" @click="deleteOutfit(outfit.id)">삭제</div>
+  </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "Card",
   props: {
-    item: Object
+    outfit: Object
   },
   setup() {
-    // const addToCart = (itemdId) => {
-    //   axios.post(`/api/cart/items/${itemdId}`).then(() => {
-    //     console.log("success");
-    //   })
-    // };
-    //
-    // return {addToCart}
+    const deleteOutfit = (outfitId) => {
+      axios.patch(`/api/outfit/${outfitId}`).then(() => {
+        this.emit('deleted'); //deleted 이벤트를 발생
+      })
+    }
+
+    return {deleteOutfit}
   }
 }
 </script>
