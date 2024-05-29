@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @Setter
@@ -19,23 +20,11 @@ public class Outfit {
     @Column(nullable = false)
     private int memberId;
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime regdate;
 
     @Column(length = 100, nullable = false)
     private String review;
-
-    @Column
-    private int overcoat;
-
-    @Column
-    private int top;
-
-    @Column
-    private int bottom;
-
-    @Column
-    private int accessory;
 
     @Column(length = 20)
     private String region;
@@ -45,4 +34,16 @@ public class Outfit {
 
     @Column
     private int delStatus;
+
+    @Column(length = 100)
+    private String overcoat;
+
+    @Column(length = 100)
+    private String top;
+
+    @Column(length = 100)
+    private String bottom;
+
+    @Column(length = 100)
+    private String accessory;
 }
