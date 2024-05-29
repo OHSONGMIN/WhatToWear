@@ -5,9 +5,9 @@ import lombok.Getter;
 @Getter
 public class OutfitDto {
 
-    private int overcoat;
-    private int top;
-    private int bottom;
-    private int accessory;
+    private String overcoat; //JSON
+    private String top;
+    private String bottom;
+    private String accessory;
     private String review;
 }
