@@ -1,7 +1,9 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.OutfitDto;
+import com.example.backend.entity.Detail;
 import com.example.backend.entity.Outfit;
+import com.example.backend.repository.DetailRepository;
 import com.example.backend.repository.OutfitRepository;
 import com.example.backend.service.JwtService;
 import jakarta.persistence.EntityNotFoundException;
@@ -26,6 +28,10 @@ public class OutfitController {
     @Autowired
     private OutfitRepository outfitRepository;
 
+    @Autowired
+    private DetailRepository detailRepository;
+
+
     @PostMapping("/api/write")
     public ResponseEntity pushOutfit(
             @RequestBody OutfitDto dto,
@@ -38,19 +44,31 @@ public class OutfitController {
         int memberId = jwtService.getId(token);
         Outfit newOutfit = new Outfit();
 
-        //1. outfits DB에 먼저 담고
+        //1. outfits DB에 먼저 담고 + 나중에 지역, 온도도 추가해야함
         newOutfit.setMemberId(memberId);
+        newOutfit.setReview(dto.getReview());
+        newOutfit.setRegdate(LocalDateTime.now());
+        newOutfit.setRegion("서울");
         newOutfit.setOvercoat(dto.getOvercoat());
         newOutfit.setTop(dto.getTop());
         newOutfit.setBottom(dto.getBottom());
         newOutfit.setAccessory(dto.getAccessory());
-        newOutfit.setReview(dto.getReview());
-        newOutfit.setRegdate(LocalDateTime.now());
 
         outfitRepository.save(newOutfit);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
+/*
+    private void saveDetails(int outfitId, int[] itemIds) {
+        for (Integer itemId : itemIds) {
+            Detail newDetail = new Detail();
+            newDetail.setOutfitId(outfitId);
+            newDetail.setItemId(itemId);
+            detailRepository.save(newDetail);
+        }
+    }
+    */
+
 
     @GetMapping("/api/outfits")
     public ResponseEntity getOutfits() {
@@ -62,7 +80,7 @@ public class OutfitController {
 
     @Transactional
     @PatchMapping("/api/outfit/{outfitId}")
-    public ResponseEntity deleteOutfit (
+    public ResponseEntity deleteOutfit(
             @PathVariable("outfitId") int outfitId,
             @CookieValue(value = "token", required = false) String token
     ) {
