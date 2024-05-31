@@ -1,4 +1,7 @@
 <template>
+
+  현재 위치 : {{ state.address.city }} {{ state.address.borough }}
+
   <div class="col" v-for="outfit in state.outfits" :key="outfit.id">
     <Card :outfit="outfit" @deleted="load"/> <!-- outfit이라는 이름으로 outfit객체를 전달-->
     <!-- Card 컴포넌트에서 발생한 deleted 이벤트를 수신 -->
@@ -18,16 +21,46 @@ export default {
   components: {Card, Write},
   setup() {
     const state = reactive({
-      outfits: []
+      outfits: [],
+      address: {
+        borough: "", //신봉동
+        city: "", //용인시
+      },
+      // grid: {
+      //   gridX: "",
+      //   gridY: ""
+      // },
     })
 
     const load = () => {
       axios.get("/api/outfits").then((res) => {
+        console.log(res.data);
         state.outfits = res.data;
       })
     }
 
     load();
+
+    const getWeather = () => {
+      navigator.geolocation.getCurrentPosition(position => {
+        const lat = position.coords.latitude; //위도
+        const lon = position.coords.longitude; //경도
+        console.log("lat = " + lat + "lon = " + lon); //찍힘!!
+
+        //Reverse Geocoding API 호출
+        axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`).then(({data}) => {
+          state.address = data.address;
+        })
+
+        axios.get(`/api/grid?lat=${lat}&lon=${lon}`).then(() => {
+          //console.log("res.data.x= " + data.x + "res.data.y= " + data.y); //찍힘!!
+          // state.grid.gridX = data.x;
+          // state.grid.gridY = data.y;
+        })
+      })
+    };
+
+    getWeather();
 
     const modalStatus = ref(false); //반응형
 
@@ -39,7 +72,7 @@ export default {
       modalStatus.value = false;
     }
 
-    return {state, load, modalStatus, openModal, closeModal}
+    return {state, load, modalStatus, openModal, closeModal, getWeather}
   }
 }
 </script>
