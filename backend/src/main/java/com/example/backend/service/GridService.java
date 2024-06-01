@@ -9,14 +9,14 @@ import java.util.Map;
 @Service
 public class GridService {
 
-    private static final double RE = 6371.00877;
-    private static final double GRID = 5.0;
-    private static final double SLAT1 = 30.0;
-    private static final double SLAT2 = 60.0;
-    private static final double OLON = 126.0;
-    private static final double OLAT = 38.0;
-    private static final double XO = 43;
-    private static final double YO = 136;
+    private static final double RE = 6371.00877; //지구 반경(km)
+    private static final double GRID = 5.0; //격자 간격(km)
+    private static final double SLAT1 = 30.0; //투영 위도1
+    private static final double SLAT2 = 60.0; //투영 위도2
+    private static final double OLON = 126.0; //기준점 경도
+    private static final double OLAT = 38.0; //기준점 위도
+    private static final double XO = 43; //기준점 x좌표
+    private static final double YO = 136; //기준점 y좌표
 
     public Map<String, Double> dfs_xy_conv(String code, double v1, double v2) {
         double DEGRAD = Math.PI / 180.0;
