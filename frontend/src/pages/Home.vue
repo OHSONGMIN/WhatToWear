@@ -1,6 +1,7 @@
 <template>
 
-  현재 위치 : {{ state.address.city }} {{ state.address.borough }}
+  <Weather v-if="state.weatherData" :weatherData="state.weatherData" :address="state.address"/>
+<!--  현재 위치 : {{ state.address.city }} {{ state.address.borough }}-->
 
   <div class="col" v-for="outfit in state.outfits" :key="outfit.id">
     <Card :outfit="outfit" @deleted="load"/> <!-- outfit이라는 이름으로 outfit객체를 전달-->
@@ -15,10 +16,11 @@ import axios from "axios";
 import {reactive, ref} from "vue";
 import Card from "@/components/Card.vue";
 import Write from "@/components/Write.vue";
+import Weather from "@/components/Weather.vue";
 
 export default {
   name: "Home",
-  components: {Card, Write},
+  components: {Card, Write, Weather},
   setup() {
     const state = reactive({
       outfits: [],
@@ -26,10 +28,7 @@ export default {
         //borough: "", //신봉동
         //city: "", //용인시
       },
-      // grid: {
-      //   gridX: "",
-      //   gridY: ""
-      // },
+      weatherData: null,
     })
 
     const load = () => {
@@ -53,23 +52,46 @@ export default {
         })
 
         axios.get(`/api/weather?lat=${lat}&lon=${lon}`).then((res) => {
-          /*
+          /* POP, SKY, TMP 1시간 단위로 출력됨
            * POP	강수확률	% ★
-           * PTY	강수형태	코드값 ★
-           * PCP	1시간 강수량	범주 (1 mm) ★
-           * REH	습도	% ★
-           * SNO	1시간 신적설	범주(1 cm) ★
            * SKY	하늘상태	코드값 ★
            * TMP	1시간 기온	℃ ★
            * TMN	일 최저기온	℃
            * TMX	일 최고기온	℃
-           * UUU	풍속(동서성분)	m/s ★
-           * VVV	풍속(남북성분)	m/s ★
-           * WAV	파고	M ★
-           * VEC	풍향	deg ★
-           * WSD	풍속	m/s ★
            */
-          console.log("날씨는 " + JSON.stringify(res.data));
+          if (res.status === 200) {
+            //console.log(res.data.response.body);
+            const weatherItems = res.data.response.body.items.item;
+            const weather = {};
+
+            weatherItems.forEach(item => {
+
+              const category = item.category;
+              const fcstTime = item.fcstTime;
+              const fcstDate = item.fcstDate;
+              const baseTime = item.baseTime;
+              const baseDate = item.baseTime;
+
+              if (category === "TMP" && fcstTime === baseTime && fcstDate === baseDate) {
+                weather.currentTemp = item.fcstValue;
+              }
+              if (category === "TMN") {
+                weather.minTemp = item.fcstValue;
+              }
+              if (category === "TMX") {
+                weather.maxTemp = item.fcstValue;
+              }
+              if (category === "POP" && fcstTime === baseTime && fcstDate === baseDate) {
+                weather.pop = item.fcstValue;
+              }
+              if (category === "SKY" && fcstTime === baseTime && fcstDate === baseDate) {
+                weather.sky = item.fcstValue;
+              }
+            });
+
+            state.weatherData = weather;
+          }
+          console.log(JSON.stringify(res.data));
         })
       })
     };
