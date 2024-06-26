@@ -19,7 +19,7 @@ import java.util.Map;
 public class WeatherController {
 
     private String apiUrl = "http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst";
-    private String apiKey = ""; //encoding
+    private String apiKey = "B7yvNvRj2awYzuewTUeXeYA3QUT5q19gCrX3sIlZrKQtv%2Bc7HhloJDeHQnlWN8%2BeA7VPqaHYiQ7ZlrmuzZ0OEQ%3D%3D"; //encoding
 
     @Autowired
     private GridService gridService;
@@ -37,10 +37,18 @@ public class WeatherController {
         Double y = gridXY.get("y");
 
         LocalDate now = LocalDate.now();
-        LocalTime time = LocalTime.now();
+        //LocalTime time = LocalTime.now();
 
-        String baseDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
-        String baseTime = timeChange(time.format(DateTimeFormatter.ofPattern("HH00")));
+        String nowDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+        String nowTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH00"));
+        //System.out.println("nowDate" + nowDate + "nowTime" + nowTime);
+
+        //baseDate는 하루 이전
+        String baseDate = now.minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+
+        //baseTime은 2300으로 고정
+        //String baseTime = timeChange(time.format(DateTimeFormatter.ofPattern("HH00")));
+        String baseTime = "2300";
 
         //캐시 데이더
         String cacheKey = baseDate + baseTime + "-" + lat + "-" + lon;
@@ -49,19 +57,12 @@ public class WeatherController {
         if (cachedData != null) {
             return new ResponseEntity<>(cachedData, HttpStatus.OK);
         }
-        String dataType = "JSON";
-
-        /*
-        String url = String.format("%s?serviceKey=%s&numOfRows=290&pageNo=1&base_date=%s&base_time=%s&nx=%d&ny=%d",
-                apiUrl, apiKey, baseDate, baseTime, x.intValue(), y.intValue());
-                //RestTemplate을 사용해 API 호출
-
-        RestTemplate restTemplate = new RestTemplate();
-        ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-        */
 
         //API 요청
+        String dataType = "JSON";
+
         String encodedApiKey = URLEncoder.encode(apiKey, StandardCharsets.UTF_8);
+        //String url = String.format("%s?serviceKey=%s&numOfRows=300&pageNo=1&base_date=%s&base_time=%s&nx=%.0f&ny=%.0f&dataType=%s", apiUrl, encodedApiKey, baseDate, baseTime, x, y, dataType);
         String url = String.format("%s?serviceKey=%s&numOfRows=290&pageNo=1&base_date=%s&base_time=%s&nx=%.0f&ny=%.0f&dataType=%s", apiUrl, encodedApiKey, baseDate, baseTime, x, y, dataType);
 
         System.out.println("Request URL: " + url); // 로그에 요청 URL 출력
@@ -104,12 +105,13 @@ public class WeatherController {
         return cacheManager.getCache("weatherCache").get(cacheKey, String.class);
     }
 
+    /*
     public String timeChange(String time) {
-        /*
-         시간은 3시간 단위로 조회해야 한다. 안그러면 정보가 없다고 뜬다.
-         0200, 0500, 0800 ~ 2300까지
-         그래서 시간을 입력했을때 switch문으로 조회 가능한 시간대로 변경해주었다.
-         */
+
+         //시간은 3시간 단위로 조회해야 한다. 안그러면 정보가 없다고 뜬다.
+         //0200, 0500, 0800 ~ 2300까지
+         //그래서 시간을 입력했을때 switch문으로 조회 가능한 시간대로 변경해주었다.
+
 
         switch (time) {
 
@@ -154,5 +156,5 @@ public class WeatherController {
         }
         return time;
     }
+    */
 }
-
