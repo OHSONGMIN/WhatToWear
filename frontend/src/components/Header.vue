@@ -40,7 +40,7 @@ export default {
 
 <style scoped>
 header {
-  padding: 10px 20px; /* Reduced padding for smaller screens */
+  padding: 25px 20px; /* Reduced padding for smaller screens */
   background-color: #f0f0f0; /* White background for a clean look */
   border-bottom: 1px solid #f0f0f0; /* Subtle border for separation */
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1); /* Soft shadow for depth */
