@@ -11,10 +11,10 @@
     </div>
 
     <div>
-      <span v-for="item in parsedOutfit.overcoat" :key="item" class="badge bg-primary badge-lg me-2 mb-2">{{ item }}</span>
-      <span v-for="item in parsedOutfit.top" :key="item" class="badge bg-warning text-dark badge-lg me-2 mb-2">{{ item }}</span>
-      <span v-for="item in parsedOutfit.bottom" :key="item" class="badge bg-success badge-lg me-2 mb-2">{{ item }}</span>
-      <span v-for="item in parsedOutfit.accessory" :key="item" class="badge bg-secondary badge-lg me-2 mb-2">{{ item }}</span>
+      <span v-for="item in parsedOutfit.overcoat" :key="item" class="badge custom-bg-overcoat badge-lg me-2 mb-2">{{ item }}</span>
+      <span v-for="item in parsedOutfit.top" :key="item" class="badge custom-bg-top text-dark badge-lg me-2 mb-2">{{ item }}</span>
+      <span v-for="item in parsedOutfit.bottom" :key="item" class="badge custom-bg-bottom badge-lg me-2 mb-2">{{ item }}</span>
+      <span v-for="item in parsedOutfit.accessory" :key="item" class="badge custom-bg-accessory badge-lg me-2 mb-2">{{ item }}</span>
     </div>
   </div>
 </template>
@@ -83,6 +83,12 @@ export default {
 </script>
 
 <style scoped>
+.card {
+  background-color: #F6F5F2;
+  border-radius: 15px;
+  margin: 10px;
+}
+
 .badge-lg {
   font-size: 12px;
   padding: 0.5em 0.8em;
@@ -90,5 +96,25 @@ export default {
 
 .cursor-pointer {
   cursor: pointer;
+}
+
+.custom-bg-overcoat {
+  background-color: #EFBC9B;
+  color: black;
+}
+
+.custom-bg-top {
+  background-color: #FBF3D5;
+  color: black;
+}
+
+.custom-bg-bottom {
+  background-color: #D6DAC8;
+  color: black;
+}
+
+.custom-bg-accessory {
+  background-color: #9CAFAA;
+  color: black;
 }
 </style>
