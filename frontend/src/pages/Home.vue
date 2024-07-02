@@ -67,12 +67,12 @@ export default {
             weatherItems.forEach(item => {
 
               const category = item.category;
-              const fcstTime = item.fcstTime;
-              const fcstDate = item.fcstDate;
-              const baseTime = item.baseTime;
-              const baseDate = item.baseTime;
+              // const fcstTime = item.fcstTime;
+              // const fcstDate = item.fcstDate;
+              // const baseTime = item.baseTime;
+              // const baseDate = item.baseTime;
 
-              if (category === "TMP" && fcstTime === baseTime && fcstDate === baseDate) {
+              if (category === "TMP") {
                 weather.currentTemp = item.fcstValue;
               }
               if (category === "TMN") {
@@ -81,10 +81,10 @@ export default {
               if (category === "TMX") {
                 weather.maxTemp = item.fcstValue;
               }
-              if (category === "POP" && fcstTime === baseTime && fcstDate === baseDate) {
+              if (category === "POP") {
                 weather.pop = item.fcstValue;
               }
-              if (category === "SKY" && fcstTime === baseTime && fcstDate === baseDate) {
+              if (category === "SKY") {
                 weather.sky = item.fcstValue;
               }
             });
