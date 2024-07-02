@@ -1,19 +1,29 @@
 <template>
-  <div>
-    <div v-if="weatherData">
-      <p>현재 기온: {{ weatherData.currentTemp }}</p>
-      <p>최저 기온: {{ weatherData.minTemp }}</p>
-      <p>최고 기온: {{ weatherData.maxTemp }}</p>
-      <p>강수 확률: {{ weatherData.pop }}</p>
-      <div>
-      <p v-if="weatherData.sky <= 5"> 맑음</p>
-      <p v-else-if="weatherData.sky <= 8"> 구름많음</p>
-      <p v-else> 흐림</p>
+  <div class="weather-container">
+    <div class="left-weather">
+      <div v-if="weatherData">
+
+        <span>
+          <span v-if="weatherData.sky <= 5"><i class="bi bi-brightness-high icon-large"></i></span>
+          <span v-else-if="weatherData.sky <= 8"><i class="bi bi-cloud-sun"></i></span>
+          <span v-else><i class="bi bi-clouds-fill"></i></span>
+        </span>
+
+        <span class="icon-large">&nbsp;{{ weatherData.currentTemp }}˚</span>
+
+        <div>
+          {{ weatherData.minTemp }}˚ / {{ weatherData.maxTemp }}˚&nbsp; 강수 확률 {{ weatherData.pop }}%
+        </div>
       </div>
     </div>
 
-    <div v-if="address">
-      <p>현재 지역: {{ address.city }} {{ address.borough }}</p>
+    <div class="right-weather">
+      <div v-if="address">
+        <p>{{ address.city }} {{ address.borough }}&nbsp;<i class="bi bi-geo-alt-fill"></i></p>
+      </div>
+      <div v-else>
+        <p>현재 위치를 찾을 수 없습니다.</p>
+      </div>
     </div>
   </div>
 </template>
@@ -31,10 +41,35 @@ export default {
       required: false,
     }
   }
-
-  }
+}
 </script>
 
 <style scoped>
+.weather-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: white;
+  padding: 3px 10px;
+  /* border-radius: 15px; */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ddd;
+}
 
+.left-weather {
+  display: inline-block;
+}
+
+.right-weather {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: inline-block;
+  margin-left: auto;
+}
+
+.icon-large {
+  font-size: 3em;
+}
 </style>
