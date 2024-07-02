@@ -73,10 +73,6 @@ header {
   transition: color 0.3s;
 }
 
-.logo:hover {
-  color: #007bff; /* Change color on hover */
-}
-
 .nav-item {
   color: #333333; /* Same color as the logo */
   cursor: pointer;
@@ -92,7 +88,7 @@ header {
 }
 
 .nav-item a:hover {
-  color: #007bff; /* Change color on hover */
+  color: #B0AB99; /* Change color on hover */
   text-decoration: none;
 }
 
