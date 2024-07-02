@@ -8,7 +8,7 @@
     <!-- Card 컴포넌트에서 발생한 deleted 이벤트를 수신 -->
   </div>
   <Write v-if="modalStatus" @sendClose="closeModal" @sendLoad="load"></Write>
-  <button type="button" @click="openModal">작성하기</button>
+  <button type="button" class="fixed-button" @click="openModal"><i class="bi bi-pencil"></i></button>
 </template>
 
 <script>
@@ -114,5 +114,27 @@ export default {
 </script>
 
 <style scoped>
+.fixed-button {
+  position: fixed;
+  bottom: 20px; /* 화면의 아래에서 20px 위 */
+  right: 20px;  /* 화면의 오른쪽에서 20px 왼쪽 */
+  width: 50px; /* 버튼의 너비 (높이와 동일하게 설정) */
+  height: 50px; /* 버튼의 높이 */
+  background-color: #635E4E; /* 버튼 색상 */
+  color: white; /* 글자 색상 */
+  border: none; /* 테두리 없음 */
+  border-radius: 50%; /* 완벽한 원형 버튼 */
+  display: flex; /* 중앙 정렬을 위한 Flexbox */
+  align-items: center; /* 수직 중앙 정렬 */
+  justify-content: center; /* 수평 중앙 정렬 */
+  font-size: 24px; /* 아이콘 크기 (아이콘을 크게 보여줌) */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 그림자 효과 */
+  cursor: pointer; /* 마우스 커서 변경 */
+  transition: background-color 0.3s; /* 배경색 변화 애니메이션 */
+}
+
+.fixed-button:hover {
+  background-color: #B0AB99;
+}
 
 </style>
