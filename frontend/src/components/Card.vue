@@ -1,13 +1,23 @@
 <template>
   <div class="card p-3 mb-3 shadow-sm">
     <div class="d-flex justify-content-between align-items-center mb-2">
-      <div>
-        <span class="text-muted">{{ formatDate(outfit.regdate) }}</span> &nbsp;
-        <strong>{{ outfit.review }}</strong>
+      <div class="d-flex align-items-center">
+        <span class="text-muted">{{ formatDate(outfit.regdate) }}</span> &nbsp; &nbsp;
+        <span class="text-muted">{{ outfit.region }}</span>
       </div>
-      <span v-if="$store.state.account.id === outfit.memberId" class="cursor-pointer" @click="deleteOutfit(outfit.id)">
-        <i class="fa fa-times"></i>
-      </span>
+
+      <div class="d-flex justify-content-end align-items-center">
+        <span class="review">
+          <strong>
+            <span v-if="outfit.review === '더워요'" class="review-hot"><i class="bi bi-emoji-angry"></i> 더워요</span>
+            <span v-else-if="outfit.review === '딱 좋아요'" class="review-good"><i class="bi bi-emoji-smile"></i> 좋아요</span>
+            <span v-else class="review-cold"><i class="bi bi-emoji-grimace"></i> 추워요</span>
+          </strong>
+        </span>
+        <span v-if="$store.state.account.id === outfit.memberId" class="cursor-pointer ms-3" @click="deleteOutfit(outfit.id)">
+          <strong><i class="bi bi-x"></i></strong>
+        </span>
+      </div>
     </div>
 
     <div>
@@ -116,5 +126,22 @@ export default {
 .custom-bg-accessory {
   background-color: #9CAFAA;
   color: black;
+}
+
+.review-hot {
+  color: #EB5353;
+}
+
+.review-good {
+  color: #007D50;
+}
+
+.review-cold {
+  color: #0871B1;
+}
+
+.review {
+  margin-left: auto;
+  text-align: right;
 }
 </style>
