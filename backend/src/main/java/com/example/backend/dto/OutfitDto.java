@@ -10,4 +10,5 @@ public class OutfitDto {
     private String bottom;
     private String accessory;
     private String review;
+    private String address;
 }
