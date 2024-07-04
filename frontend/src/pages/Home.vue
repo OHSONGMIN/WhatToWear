@@ -1,14 +1,17 @@
 <template>
 
-  <Weather v-if="state.weatherData" :weatherData="state.weatherData" :address="state.address"/>
-<!--  현재 위치 : {{ state.address.city }} {{ state.address.borough }}-->
+<!--  <Weather v-if="state.weatherData" :weatherData="state.weatherData" :address="state.address"/>-->
+  <Weather :weatherData="state.weatherData" :address="state.address"/>
+  <!--  현재 위치 : {{ state.address.city }} {{ state.address.borough }}-->
 
   <div class="col" v-for="outfit in state.outfits" :key="outfit.id">
     <Card :outfit="outfit" @deleted="load"/> <!-- outfit이라는 이름으로 outfit객체를 전달-->
     <!-- Card 컴포넌트에서 발생한 deleted 이벤트를 수신 -->
   </div>
-  <Write v-if="modalStatus" @sendClose="closeModal" @sendLoad="load"></Write>
-  <button type="button" class="fixed-button" @click="openModal"><i class="bi bi-pencil"></i></button>
+  <Write v-if="modalStatus" @sendClose="closeModal" @sendLoad="load" :address="state.address"></Write>
+  <div v-if="$store.state.account.id">
+    <button type="button" class="fixed-button" @click="openModal"><i class="bi bi-pencil"></i></button>
+  </div>
 </template>
 
 <script>
@@ -24,16 +27,12 @@ export default {
   setup() {
     const state = reactive({
       outfits: [],
-      address: {
-        //borough: "", //신봉동
-        //city: "", //용인시
-      },
+      address: null,
       weatherData: null,
     })
 
     const load = () => {
       axios.get("/api/outfits").then((res) => {
-        console.log(res.data);
         state.outfits = res.data;
       })
     }
@@ -47,9 +46,16 @@ export default {
         console.log("lat = " + lat + "lon = " + lon); //찍힘!!
 
         //Reverse Geocoding API 호출
-        axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`).then(({data}) => {
-          state.address = data.address;
-        })
+        axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
+            .then(({data}) => {
+              //axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=37.514575&lon=127.0495556`).then(({data}) => {
+              state.address = data.address;
+              console.log("내 주소라고용..", state.address);
+            })
+            .catch((error) => {
+              console.error("Reverse Geocoding API 호출 실패:", error);
+              state.address = "위치 정보를 불러올 수 없습니다.";
+            })
 
         axios.get(`/api/weather?lat=${lat}&lon=${lon}`).then((res) => {
           /* POP, SKY, TMP 1시간 단위로 출력됨
@@ -90,9 +96,20 @@ export default {
             });
 
             state.weatherData = weather;
+          } else {
+
+            state.weatherData = null;
+            console.log(state.weatherData + "null 마잔요?11");
+
           }
-          console.log(JSON.stringify(res.data));
+
+          //console.log(JSON.stringify(res.data));
         })
+            .catch((error) => {
+              console.error("Weather API 호출 실패:", error);
+              state.weatherData = null;
+              console.log(state.weatherData + "null 마잔요?22");
+            })
       })
     };
 
@@ -117,7 +134,7 @@ export default {
 .fixed-button {
   position: fixed;
   bottom: 20px; /* 화면의 아래에서 20px 위 */
-  right: 20px;  /* 화면의 오른쪽에서 20px 왼쪽 */
+  right: 20px; /* 화면의 오른쪽에서 20px 왼쪽 */
   width: 50px; /* 버튼의 너비 (높이와 동일하게 설정) */
   height: 50px; /* 버튼의 높이 */
   background-color: #635E4E; /* 버튼 색상 */
