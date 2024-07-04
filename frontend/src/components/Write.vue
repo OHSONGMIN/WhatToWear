@@ -69,8 +69,8 @@
           <section>
             <div class="button-group">
               <button
-                  @click="toggleSelectionOne('딱 좋아요')"
-                  :class="{ selected: isSelectedOne('딱 좋아요') }"
+                  @click="toggleSelectionOne('좋아요')"
+                  :class="{ selected: isSelectedOne('좋아요') }"
               >
                 딱 좋아요
               </button>
@@ -102,6 +102,12 @@ import {reactive} from "vue";
 import axios from "axios";
 
 export default {
+  props: {
+    address: {
+      type: Object,
+      required: false
+    }
+  },
   setup(props, {emit}) {
     const state = reactive({
       overcoatItems: [],
@@ -117,7 +123,7 @@ export default {
         top: "",
         bottom: "",
         accessory: "",
-        review: ""
+        review: "",
       },
     });
 
@@ -137,6 +143,13 @@ export default {
       args.top = JSON.stringify(state.selectedTop);
       args.bottom = JSON.stringify(state.seletedBottom);
       args.accessory = JSON.stringify(state.seletedAcc);
+
+      console.log("주소 받아왔어? " + props.address.city);
+      //const city = props.address.city || "알 수 없음";
+      //const borough = props.address.borough || "";
+      //args.address = `${city} ${borough}`.trim(); // 공백 제거
+      //console.log("주소 결합 " + args.address);
+      args.address = props.address.city || "알 수 없음";
 
       axios.post("/api/write", args).then(() => {
         alert("작성 완료!!");
