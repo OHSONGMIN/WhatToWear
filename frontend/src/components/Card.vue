@@ -10,7 +10,7 @@
         <span class="review">
           <strong>
             <span v-if="outfit.review === '더워요'" class="review-hot"><i class="bi bi-emoji-angry"></i> 더워요</span>
-            <span v-else-if="outfit.review === '딱 좋아요'" class="review-good"><i class="bi bi-emoji-smile"></i> 좋아요</span>
+            <span v-else-if="outfit.review === '좋아요'" class="review-good"><i class="bi bi-emoji-smile"></i> 좋아요</span>
             <span v-else class="review-cold"><i class="bi bi-emoji-grimace"></i> 추워요</span>
           </strong>
         </span>
