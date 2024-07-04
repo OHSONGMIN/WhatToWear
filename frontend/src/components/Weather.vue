@@ -1,7 +1,7 @@
 <template>
   <div class="weather-container">
     <div class="left-weather">
-      <div v-if="weatherData">
+      <div v-if="weatherData !== null">
 
         <span>
           <span v-if="weatherData.sky <= 5"><i class="bi bi-brightness-high icon-large"></i></span>
@@ -15,14 +15,21 @@
           {{ weatherData.minTemp }}˚ / {{ weatherData.maxTemp }}˚&nbsp; 강수 확률 {{ weatherData.pop }}%
         </div>
       </div>
+
+      <div v-else class="text-muted">
+        <i class="bi bi-exclamation-circle"></i> ERROR<br><br>
+        날씨 정보를 불러올 수 없습니다. <br>
+      </div>
     </div>
 
     <div class="right-weather">
-      <div v-if="address">
+      <div v-if="address !== null">
         <p>{{ address.city }} {{ address.borough }}&nbsp;<i class="bi bi-geo-alt-fill"></i></p>
       </div>
-      <div v-else>
-        <p>현재 위치를 찾을 수 없습니다.</p>
+      <div v-else class="text-muted">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
       </div>
     </div>
   </div>
@@ -34,11 +41,13 @@ export default {
   props: {
     weatherData: {
       type: Object,
-      required: false,
+      //required: false,
+      default: null,
     },
     address: {
       type: Object,
       required: false,
+      default: null,
     }
   }
 }
