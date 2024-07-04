@@ -48,7 +48,8 @@ public class OutfitController {
         newOutfit.setMemberId(memberId);
         newOutfit.setReview(dto.getReview());
         newOutfit.setRegdate(LocalDateTime.now());
-        newOutfit.setRegion("서울");
+        newOutfit.setRegion(dto.getAddress());
+        System.out.println("지역은" + newOutfit.getRegion());
         newOutfit.setOvercoat(dto.getOvercoat());
         newOutfit.setTop(dto.getTop());
         newOutfit.setBottom(dto.getBottom());
