@@ -1,16 +1,25 @@
 <template>
-
-<!--  <Weather v-if="state.weatherData" :weatherData="state.weatherData" :address="state.address"/>-->
-  <Weather :weatherData="state.weatherData" :address="state.address"/>
-  <!--  현재 위치 : {{ state.address.city }} {{ state.address.borough }}-->
+  <div>
+    <Weather :weatherData="state.weatherData" :address="state.address"/>
+    <!--  현재 위치 : {{ state.address.city }} {{ state.address.borough }}-->
+  </div>
 
   <div class="col" v-for="outfit in state.outfits" :key="outfit.id">
     <Card :outfit="outfit" @deleted="load"/> <!-- outfit이라는 이름으로 outfit객체를 전달-->
     <!-- Card 컴포넌트에서 발생한 deleted 이벤트를 수신 -->
   </div>
-  <Write v-if="modalStatus" @sendClose="closeModal" @sendLoad="load" :address="state.address"></Write>
+
+  <div>
+    <Write v-if="modalStatus" @sendClose="closeModal" @sendLoad="load" :address="state.address"></Write>
+  </div>
+
   <div v-if="$store.state.account.id">
     <button type="button" class="fixed-button" @click="openModal"><i class="bi bi-pencil"></i></button>
+  </div>
+  <div v-else>
+    <router-link class="fixed-button" to="/login">
+      <i class="bi bi-pencil"></i>
+    </router-link>
   </div>
 </template>
 
