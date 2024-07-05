@@ -88,7 +88,7 @@ header {
 }
 
 .nav-item a:hover {
-  color: #B0AB99; /* Change color on hover */
+  /* color: #B0AB99;  Change color on hover */
   text-decoration: none;
 }
 

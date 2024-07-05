@@ -1,7 +1,11 @@
 <template>
-  <Header/>
-  <RouterView/>
-  <Footer/>
+  <div id="app">
+    <Header/>
+    <main>
+      <RouterView/>
+    </main>
+    <Footer/>
+  </div>
 </template>
 
 <script>
@@ -21,12 +25,10 @@ export default {
   setup() {
     const check = () => {
       axios.get("/api/account/check").then((res) => {
-        console.log(res.data);
 
         if (res.data) {
           store.commit("setAccount", res.data);
-        }
-        else {
+        } else {
           store.commit("setAccount", 0);
         }
       })
@@ -42,5 +44,13 @@ export default {
 </script>
 
 <style scoped>
+#app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
 
+main {
+  flex: 1;
+}
 </style>
