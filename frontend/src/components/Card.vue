@@ -7,15 +7,16 @@
       </div>
 
       <div class="d-flex justify-content-end align-items-center">
+        <span v-if="$store.state.account.id === outfit.memberId" class="cursor-pointer ms-3 text-muted" @click="deleteOutfit(outfit.id)">
+          삭제
+        </span>
+        &nbsp;
         <span class="review">
           <strong>
             <span v-if="outfit.review === '더워요'" class="review-hot"><i class="bi bi-emoji-angry"></i> 더워요</span>
             <span v-else-if="outfit.review === '좋아요'" class="review-good"><i class="bi bi-emoji-smile"></i> 좋아요</span>
             <span v-else class="review-cold"><i class="bi bi-emoji-grimace"></i> 추워요</span>
           </strong>
-        </span>
-        <span v-if="$store.state.account.id === outfit.memberId" class="cursor-pointer ms-3" @click="deleteOutfit(outfit.id)">
-          <strong><i class="bi bi-x"></i></strong>
         </span>
       </div>
     </div>
@@ -106,6 +107,7 @@ export default {
 
 .cursor-pointer {
   cursor: pointer;
+  text-decoration: underline;
 }
 
 .custom-bg-overcoat {
