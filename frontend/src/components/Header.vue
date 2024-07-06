@@ -7,7 +7,7 @@
 
       <div class="right">
         <div v-if="$store.state.account.id" class="nav-item">
-          <router-link to="/">작성 내역</router-link>
+          <router-link to="/history">마이페이지</router-link>
         </div>
         <div class="nav-item">
           <router-link to="/login" v-if="!$store.state.account.id">로그인</router-link>
