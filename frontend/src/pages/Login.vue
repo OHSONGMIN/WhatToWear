@@ -1,22 +1,30 @@
 <template>
-  <div class="container">
-    <div class="form-signin w-100 m-auto">
-      <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+  <div class="container mt-5">
+    <div class="card w-100 m-auto">
+      <div class="form-signin w-100 m-auto">
+        <h3 class="card-title mb-3 fw-normal">Welcome back,</h3><br>
 
-      <div class="form-floating">
-        <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com"
-               @keyup.enter="submit()"
-               v-model="state.form.email">
-        <label for="floatingInput">Email address</label>
-      </div>
-      <div class="form-floating">
-        <input type="password" class="form-control" id="floatingPassword" placeholder="Password"
-               @keyup.enter="submit()"
-               v-model="state.form.password">
-        <label for="floatingPassword">Password</label>
-      </div>
+        <div class="form-floating mb-1">
+          <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com"
+                 @keyup.enter="submit()"
+                 v-model="state.form.email">
+          <label for="floatingInput">이메일</label>
+        </div>
+        <div class="form-floating mb-4">
+          <input type="password" class="form-control" id="floatingPassword" placeholder="Password"
+                 @keyup.enter="submit()"
+                 v-model="state.form.password">
+          <label for="floatingPassword">비밀번호</label>
+        </div>
 
-      <button class="btn btn-primary w-100 py-2 login-button" @click="submit()">Sign in</button>
+        <button class="btn btn-primary w-100 py-2 login-button" @click="submit()">로그인</button>
+
+        <div class="sign-up">
+          <br>
+          아직 계정이 없나요?
+          <router-link to="/signup" style="color: #635E4E;"> 회원가입</router-link>
+        </div>
+      </div>
     </div>
   </div>
 </template>
@@ -33,7 +41,7 @@ export default {
       form: {
         email: "",
         password: ""
-      }
+      },
     })
 
     const submit = () => {
@@ -58,13 +66,26 @@ export default {
   justify-content: center;
   align-items: center;
   /* min-height: 400px; */
-  height: 70vh;
+  /* height: 70vh; */
+}
+
+.card {
+  border: none;
+}
+
+.card-title {
+  font-weight: bold;
+  color: #635E4E;
 }
 
 .form-signin {
   max-width: 330px;
   padding: 1rem;
   width: 100%;
+}
+
+.form-signin .fw-normal {
+  text-align: center;
 }
 
 .form-signin .form-floating:focus-within {
@@ -89,5 +110,9 @@ export default {
 
 .login-button:hover {
   background-color: #B0AB99;
+}
+
+.sign-up {
+  text-align: center;
 }
 </style>
