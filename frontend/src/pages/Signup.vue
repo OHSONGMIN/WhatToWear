@@ -61,9 +61,9 @@ export default {
       //일단 true로 초기화
       this.availableEmail = true;
 
-      function checkDuplicateEmail(email) {
-        return false;
-      }
+      // function checkDuplicateEmail(email) {
+      //   return false;
+      // }
 
       //이메일 중복 검사
       if (checkDuplicateEmail(this.email)) { //이메일이 중복이라면
