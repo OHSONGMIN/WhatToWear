@@ -3,16 +3,16 @@
     <div class="card w-100 m-auto">
       <div class="card-body w-100 m-auto">
         <h3 class="card-title text-center mb-3">Sign Up</h3><br>
-        <div class="form-signup">
-          <div class="form-floating mb-3">
+        <div class="form-signup mb-3">
+          <div class="form-floating">
             <input type="email" class="form-control" id="floatingInput" placeholder="name@example.com"
                    @keyup.enter="submit()"
                    v-model="state.form.email"
-                   @blur="checkDuplicate()">
+                   @blur="checkEmail()">
             <label for="floatingInput">이메일</label>
-            <span class="badge badge-danger mt-1" v-if="!availableEmail">이미 사용중인 이메일입니다.</span>
-            <span class="badge badge-danger mt-1" v-if="!availableEmailForm">올바른 이메일 형식이 아닙니다.</span>
           </div>
+          <div class="badge badge-danger mb-1" v-if="!state.availableEmailForm">올바른 이메일 형식이 아닙니다.</div>
+          <div class="badge badge-danger mb-1" v-if="!state.availableEmail">이미 사용중인 이메일입니다.</div>
         </div>
 
         <div class="form-floating mb-1">
@@ -38,6 +38,7 @@
 
 <script>
 import {reactive} from "vue";
+import axios from "axios";
 
 export default {
   name: "Signup",
@@ -48,8 +49,8 @@ export default {
         password: "",
         passwordConfirm: ""
       },
-      availableEmail: "",
-      availableEmailForm: "",
+      availableEmail: true,
+      availableEmailForm: true,
 
     });
 
@@ -57,33 +58,53 @@ export default {
       // 회원가입 로직을 여기에 추가
     };
 
-    const checkDuplicate = () => {
-      //일단 true로 초기화
-      this.availableEmail = true;
+    const checkEmail = async () => {
 
-      // function checkDuplicateEmail(email) {
-      //   return false;
-      // }
-
-      //이메일 중복 검사
-      if (checkDuplicateEmail(this.email)) { //이메일이 중복이라면
-        this.availableEmail = false;
-      } else {
-        this.availableEmail = true;
-      }
-
-      this.availableEmailForm = true;
+      state.availableEmailForm = true; //올바름 형식이다
+      state.availableEmail = true; //중복이 아니다
 
       //이메일 유효성 검사
-      if (checkValidateEmail(this.email)) { //이메일이 유효하다면
-        this.availableEmailForm = true;
+      if (checkInvalidateEmail(state.form.email)) {
+        state.availableEmailForm = false;
+        return;
+
       } else {
-        this.availableEmailForm = false;
+        state.availableEmailForm = true;
+      }
+
+      //이메일 중복 검사
+      state.availableEmail = await checkDuplicateEmail(state.form.email);
+    }
+
+    const checkDuplicateEmail = async (email) => {
+      try {
+        const response = await axios.post(`/api/signup/dupl/${email}`);
+
+        return !response.data;
+      }
+      catch (error) {
+        console.error("Error checking email:", error);
+
+        return false;
       }
     }
-    return {state, submit, checkDuplicate};
+
+    //이메일 유효성 검사
+    const checkInvalidateEmail = (email) => {
+      const emailForm = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/i;
+
+      return !emailForm.test(email)
+    }
+    //if (checkInvalidateEmail(state.form.email)) {
+    //  state.availableEmailForm = false;
+    //} else {
+    //  state.availableEmailForm = true;
+    //}
+
+    return {state, submit, checkEmail}
   }
 }
+
 </script>
 
 <style scoped>
@@ -127,5 +148,9 @@ export default {
 .btn-primary:hover {
   background-color: #B0AB99;
   border-color: #B0AB99;
+}
+
+.badge-danger {
+  color: red;
 }
 </style>
