@@ -59,21 +59,17 @@ export default {
     });
 
     const submit = () => {
-      
+      //availableEmail, availableEmailForm, equalsPassword true 여부 확인
+      //비밀번호 글자수 확인
+      //비밀번호 암호화
     };
 
-    const checkPassword = async () => {
+    const checkPassword = () => {
 
-      state.equalsPassword = true; //비밀번호가 동일하다
-
-      //비밀번호 일치 여부
-      if (state.form.password !== state.form.passwordConfirm) {
-        state.equalsPassword = false;
-      } else {
-        state.equalsPassword = true;
-      }
-
+      //비밀번호 일치 여부 검증
+      state.equalsPassword = (state.form.password === state.form.passwordConfirm);
     }
+
     const checkEmail = async () => {
 
       state.availableEmailForm = true; //올바름 형식이다
