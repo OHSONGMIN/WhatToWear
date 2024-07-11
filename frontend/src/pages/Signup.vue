@@ -18,17 +18,21 @@
         <div class="form-floating mb-1">
           <input type="password" class="form-control" id="floatingPassword" placeholder="Password"
                  @keyup.enter="submit()"
-                 v-model="state.form.password">
+                 v-model="state.form.password"
+                 @keyup="checkPassword()">
           <label for="floatingPassword">비밀번호</label>
         </div>
 
-        <div class="form-floating mb-4">
-          <input type="password" class="form-control" id="floatingPasswordConfirm" placeholder="PasswordConfirm"
-                 @keyup.enter="submit()"
-                 v-model="state.form.passwordConfirm">
-          <label for="floatingPasswordConfirm">비밀번호 확인</label>
+        <div class="mb-4">
+          <div class="form-floating">
+            <input type="password" class="form-control" id="floatingPasswordConfirm" placeholder="PasswordConfirm"
+                   @keyup.enter="submit()"
+                   v-model="state.form.passwordConfirm"
+                   @keyup="checkPassword()">
+            <label for="floatingPasswordConfirm">비밀번호 확인</label>
+          </div>
+          <div class="badge badge-danger mb-1" v-if="!state.equalsPassword">비밀번호가 일치하지 않습니다.</div>
         </div>
-
         <button class="btn btn-primary w-100 py-2 sign-up-button" @click="submit">회원가입</button>
       </div>
     </div>
@@ -51,13 +55,25 @@ export default {
       },
       availableEmail: true,
       availableEmailForm: true,
-
+      equalsPassword: true,
     });
 
     const submit = () => {
-      // 회원가입 로직을 여기에 추가
+      
     };
 
+    const checkPassword = async () => {
+
+      state.equalsPassword = true; //비밀번호가 동일하다
+
+      //비밀번호 일치 여부
+      if (state.form.password !== state.form.passwordConfirm) {
+        state.equalsPassword = false;
+      } else {
+        state.equalsPassword = true;
+      }
+
+    }
     const checkEmail = async () => {
 
       state.availableEmailForm = true; //올바름 형식이다
@@ -81,8 +97,7 @@ export default {
         const response = await axios.post(`/api/signup/dupl/${email}`);
 
         return !response.data;
-      }
-      catch (error) {
+      } catch (error) {
         console.error("Error checking email:", error);
 
         return false;
@@ -101,7 +116,7 @@ export default {
     //  state.availableEmailForm = true;
     //}
 
-    return {state, submit, checkEmail}
+    return {state, submit, checkEmail, checkPassword}
   }
 }
 
