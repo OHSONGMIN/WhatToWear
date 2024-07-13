@@ -58,10 +58,39 @@ export default {
       equalsPassword: true,
     });
 
-    const submit = () => {
+    const submit = async () => {
       //availableEmail, availableEmailForm, equalsPassword true 여부 확인
       //비밀번호 글자수 확인
       //비밀번호 암호화
+
+      if (!state.availableEmailForm) {
+        window.alert("올바른 이메일 형식이 아닙니다");
+        return;
+      }
+
+      if (!state.availableEmail) {
+        window.alert("이미 사용중인 이메일입니다.");
+        return;
+      }
+
+      if (!state.equalsPassword) {
+        window.alert("비밀번호가 일치하지 않습니다.");
+        return;
+      }
+
+      if (state.form.password.length < 6) {
+        window.alert("비밀번호는 최소 6자 이상이어야 합니다.");
+        return;
+      }
+
+      try {
+        //const res = await axios.post("/api/signup", state.form);
+        await axios.post("/api/signup", state.form);
+        window.alert("회원가입 성공!")
+      }
+      catch (error) {
+        window.alert("회원 가입 실패! 다시 시도해주세요.");
+      }
     };
 
     const checkPassword = () => {
@@ -79,8 +108,8 @@ export default {
       if (checkInvalidateEmail(state.form.email)) {
         state.availableEmailForm = false;
         return;
-
-      } else {
+      }
+      else {
         state.availableEmailForm = true;
       }
 
