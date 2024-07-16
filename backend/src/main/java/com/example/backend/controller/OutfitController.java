@@ -28,10 +28,6 @@ public class OutfitController {
     @Autowired
     private OutfitRepository outfitRepository;
 
-    @Autowired
-    private DetailRepository detailRepository;
-
-
     @PostMapping("/api/write")
     public ResponseEntity pushOutfit(
             @RequestBody OutfitDto dto,
@@ -49,7 +45,6 @@ public class OutfitController {
         newOutfit.setReview(dto.getReview());
         newOutfit.setRegdate(LocalDateTime.now());
         newOutfit.setRegion(dto.getAddress());
-        System.out.println("지역은" + newOutfit.getRegion());
         newOutfit.setOvercoat(dto.getOvercoat());
         newOutfit.setTop(dto.getTop());
         newOutfit.setBottom(dto.getBottom());
@@ -93,5 +88,19 @@ public class OutfitController {
         outfit.setDelStatus(1);
 
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @GetMapping("/api/history")
+    public ResponseEntity getHistory(
+            @CookieValue(value = "token", required = false) String token
+    ) {
+        if (!jwtService.isValid(token)) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+        }
+
+        int memberId = jwtService.getId(token);
+        List<Outfit> outfits = outfitRepository.findByMemberIdOrderByIdDesc(memberId);
+
+        return new ResponseEntity<>(outfits, HttpStatus.OK);
     }
 }
