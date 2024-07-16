@@ -52,9 +52,10 @@ export default {
       navigator.geolocation.getCurrentPosition(position => {
         const lat = position.coords.latitude; //위도
         const lon = position.coords.longitude; //경도
-        console.log("lat = " + lat + "lon = " + lon); //찍힘!!
+        console.log("lat = " + lat + " lon = " + lon); //찍힘!!
 
         //Reverse Geocoding API 호출
+        //axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=37.5677544&lon=127.0255591`) //서울 성동구
         axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`)
             .then(({data}) => {
               //axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=37.514575&lon=127.0495556`).then(({data}) => {
