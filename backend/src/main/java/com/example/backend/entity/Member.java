@@ -26,4 +26,7 @@ public class Member {
 
     @Column(nullable = false)
     private int delStatus;
+
+    @Column(nullable = false)
+    private String role;
 }
