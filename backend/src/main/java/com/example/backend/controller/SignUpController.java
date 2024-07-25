@@ -2,11 +2,14 @@ package com.example.backend.controller;
 
 import com.example.backend.repository.MemberRepository;
 import com.example.backend.service.JwtService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 
 @RestController
@@ -14,9 +17,6 @@ public class SignUpController {
 
     @Autowired
     private MemberRepository memberRepository;
-
-    //@Autowired
-    //private PasswordEncoder passwordEncoder;
 
     @PostMapping("/api/signup/dupl/{email}")
     public ResponseEntity checkDuplEmail(
@@ -28,9 +28,10 @@ public class SignUpController {
     }
 
     @PostMapping("/api/signup")
-    public ResponseEntity signUp (
-
+    public ResponseEntity signUp (@RequestBody MemberDto dto,
+                                  HttpServletResponse res
     ) {
+
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
