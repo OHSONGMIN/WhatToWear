@@ -1,5 +1,7 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.MemberDto;
+import com.example.backend.entity.Member;
 import com.example.backend.repository.MemberRepository;
 import com.example.backend.service.JwtService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -9,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.Map;
 
 
@@ -28,10 +31,15 @@ public class SignUpController {
     }
 
     @PostMapping("/api/signup")
-    public ResponseEntity signUp (@RequestBody MemberDto dto,
-                                  HttpServletResponse res
-    ) {
+    public ResponseEntity signUp (@RequestBody MemberDto dto) {
 
+        Member newMember = new Member();
+        newMember.setEmail(dto.getEmail());
+        newMember.setPassword(dto.getPassword());
+        newMember.setRegdate(LocalDateTime.now());
+        newMember.setRole("USER"); //ROLE_USER
+
+        memberRepository.save(newMember);
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
