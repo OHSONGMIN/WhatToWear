@@ -43,6 +43,7 @@
 <script>
 import {reactive} from "vue";
 import axios from "axios";
+import router from "@/scripts/router";
 
 export default {
   name: "Signup",
@@ -87,6 +88,7 @@ export default {
         //const res = await axios.post("/api/signup", state.form);
         await axios.post("/api/signup", state.form);
         window.alert("회원가입 성공!")
+        router.push({path: "/login"});
       }
       catch (error) {
         window.alert("회원 가입 실패! 다시 시도해주세요.");
