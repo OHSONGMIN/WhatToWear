@@ -2,11 +2,13 @@ package com.example.backend.entity;
 
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.Setter;
 
 import java.time.LocalDateTime;
 import java.util.Date;
 
 @Getter
+@Setter
 @Entity
 @Table(name = "members")
 public class Member {
@@ -24,7 +26,7 @@ public class Member {
     @Column(nullable = false)
     private LocalDateTime regdate;
 
-    @Column(nullable = false)
+    @Column
     private int delStatus;
 
     @Column(nullable = false)
