@@ -1,5 +1,6 @@
 package com.example.backend.config;
 
+import com.example.backend.service.JwtService;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.context.annotation.Bean;
@@ -9,8 +10,10 @@ import org.springframework.security.authentication.DefaultAuthenticationEventPub
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
@@ -22,38 +25,51 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class SecurityConfig {
 
     @Bean
-    @ConditionalOnMissingBean(UserDetailsService.class)
-    InMemoryUserDetailsManager inMemoryUserDetailsManager() {
-        String generatedPassword = "sajdklj3483okrldsjfklasdjf";
-        return new InMemoryUserDetailsManager(User.withUsername("user")
-                .password(generatedPassword).roles("USER").build());
-    }
+    public BCryptPasswordEncoder bCryptPasswordEncoder() {
 
-
-    @Bean
-    @ConditionalOnMissingBean(AuthenticationEventPublisher.class)
-    DefaultAuthenticationEventPublisher defaultAuthenticationEventPublisher(ApplicationEventPublisher delegate) {
-        return new DefaultAuthenticationEventPublisher(delegate);
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http
+                .csrf((auth) -> auth.disable());
 
         http
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests((authorizeRequests) ->
-                        authorizeRequests
-                                .requestMatchers("/admin/**").hasRole("ADMIN")
-                                .requestMatchers("/api/history").authenticated()
-                                .requestMatchers("/api/items").authenticated()
-                                //.anyRequest().permitAll()
-                                .requestMatchers("/**").permitAll()
-                                //.anyRequest().permitAll()
-                        //jwtService 소환하는 것들 다..... requestMAtchers 해야하나?
-                );
+                .formLogin((auth) -> auth.disable());
+
+        http
+                .httpBasic((auth) -> auth.disable());
+
+        http
+                .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/", "/**").permitAll()
+                        .anyRequest().authenticated());
+
+        http
+                .sessionManagement((session) -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         return http.build();
     }
+
+//    @Bean
+//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+//
+//        http
+//                .csrf(AbstractHttpConfigurer::disable)
+//                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+//                .authorizeHttpRequests((authorizeRequests) ->
+//                        authorizeRequests
+//                                .requestMatchers("/admin/**").hasRole("ADMIN")
+//                                .requestMatchers("/api/history").permitAll()
+//                                .requestMatchers("/api/items").permitAll()
+//                                .requestMatchers("/**").permitAll()
+//                                .anyRequest().permitAll()
+//                );
+//
+//        return http.build();
+//    }
 
 
 }
