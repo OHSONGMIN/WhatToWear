@@ -3,7 +3,6 @@ package com.example.backend.controller;
 import com.example.backend.entity.Member;
 import com.example.backend.repository.MemberRepository;
 import com.example.backend.service.JwtService;
-import com.example.backend.service.JwtServiceImpl;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
@@ -13,7 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestController
@@ -26,25 +25,28 @@ public class AccountController {
     JwtService jwtService;
 
     @PostMapping("/api/account/login")
-    public ResponseEntity login(@RequestBody Map<String, String> params,
+    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> params,
                                 HttpServletResponse res) {
         Member member = memberRepository.findByEmailAndPassword(params.get("email"), params.get("password"));
 
-        if (member != null) {
-            //return member.getId();
+        if (member != null) { //등록된 회원임
+
             //JwtService 구현 후
             int id = member.getId();
             String token = jwtService.getToken("id", id);
 
             Cookie cookie = new Cookie("token", token);
             cookie.setHttpOnly(true); //js로 접근할 수 없도록
-            cookie.setPath("/");
+            //cookie.setPath("/");
 
             res.addCookie(cookie);
 
+            Map<String, Object> response = new HashMap<>();
+            response.put("id", id);
+
             //return ResponseEntity.ok().build();
-            return new ResponseEntity<>(id, HttpStatus.OK);
-            //라고 하면 응답값으로 id를 줄 수 있음
+            return new ResponseEntity<>(response, HttpStatus.OK); //라고 하면 응답값으로 id를 줄 수 있다
+
         }
 
         //로그인 실패했을 때
