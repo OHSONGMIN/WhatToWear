@@ -45,8 +45,13 @@ export default {
     })
 
     const submit = () => {
-      axios.post("/api/account/login", state.form).then((res) => {
-        store.commit('setAccount', res.data); //로그인 하고 받은 id 값을 store에 저장하겠다.
+      axios.post("/api/account/login", state.form, {
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        }
+      }).then((res) => {
+        store.commit('setAccount', res.data.id); //로그인 하고 받은 id 값을 store에 저장하겠다.
         //sessionStorage.setItem("id", res.data); //지워도 될 듯... sessionStorage 사용하지 않으니까
         router.push({path: "/"});
         window.alert("로그인하였습니다.");
