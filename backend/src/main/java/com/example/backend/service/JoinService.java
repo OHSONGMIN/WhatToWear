@@ -7,14 +7,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+
 @Service
 public class JoinService {
 
-    @Autowired
     private UserRepository userRepository;
-
-    @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    public JoinService(UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+
+        this.userRepository = userRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
 
     public void joinProcess(MemberDto memberDto) {
 
@@ -33,6 +38,7 @@ public class JoinService {
         data.setEmail(email);
         data.setPassword(bCryptPasswordEncoder.encode(password));
         data.setRole("ROLE_ADMIN");
+        data.setRegdate(LocalDateTime.now()); //내가 추가함
 
         userRepository.save(data);
     }
