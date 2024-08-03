@@ -105,8 +105,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         String role = auth.getAuthority();
 
+        //일단 되긴 함~~~~ 성공
         //username 변수를 왜 그냥 두었냐면 jwtUtil 때문에.. 어떻게 처리할지 생각
-        String token = jwtUtil.createJwt(username, role, 60*60*10L);
+        String token = jwtUtil.createJwt(username, role, 60*60*10*1000L);
 
         //Authorization: Bearer 인증토큰string
         response.addHeader("Authorization", "Bearer " + token);
