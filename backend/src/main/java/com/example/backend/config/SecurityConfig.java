@@ -1,5 +1,6 @@
 package com.example.backend.config;
 
+import com.example.backend.jwt.JWTUtil;
 import com.example.backend.jwt.LoginFilter;
 import com.example.backend.service.CustomUserDetailsService;
 import org.springframework.context.annotation.Bean;
@@ -19,10 +20,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig{
 
     private CustomUserDetailsService userDetailsService;
+    private JWTUtil jwtUtil;
 
-    public SecurityConfig(CustomUserDetailsService userDetailsService) {
+    public SecurityConfig(CustomUserDetailsService userDetailsService, JWTUtil jwtUtil) {
 
         this.userDetailsService = userDetailsService;
+        this.jwtUtil = jwtUtil;
     }
 
 
@@ -64,7 +67,7 @@ public class SecurityConfig{
                         .anyRequest().authenticated());
 
         http
-                .addFilterAt(new LoginFilter(authenticationManager), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager, jwtUtil), UsernamePasswordAuthenticationFilter.class);
 
         http
                 .sessionManagement((session) -> session
