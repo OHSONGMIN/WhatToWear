@@ -31,7 +31,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
 
-
         try {
             ObjectMapper mapper = new ObjectMapper();
             LoginRequest loginRequest = mapper.readValue(request.getInputStream(), LoginRequest.class);
@@ -98,7 +97,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
 
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
+        Integer id = customUserDetails.getMember().getId();
         String username = customUserDetails.getUsername(); //사실 email
+
 
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
@@ -108,7 +109,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
         //일단 되긴 함~~~~ 성공
         //username 변수를 왜 그냥 두었냐면 jwtUtil 때문에.. 어떻게 처리할지 생각
-        String token = jwtUtil.createJwt(username, role, 60*60*10*1000L);
+        String token = jwtUtil.createJwt(id, username, role, 60*60*10*1000L);
 
         //Authorization: Bearer 인증토큰string
         response.addHeader("Authorization", "Bearer " + token);
