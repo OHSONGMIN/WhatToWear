@@ -28,8 +28,11 @@ export default {
   setup() {
     const logout = () => {
       axios.post("/api/account/logout").then(() => {
-        store.commit("setAccount", 0);
+        store.commit("clearAccount");
+        store.commit("clearAuthToken");
         router.push({path: "/"});
+      }).catch(error => {
+        console.error("로그아웃 실패: " + error);
       })
     }
 
