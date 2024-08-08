@@ -34,6 +34,7 @@ import {reactive} from "vue";
 import axios from "axios";
 import store from "@/scripts/store";
 import router from "@/scripts/router";
+import {jwtDecode} from "jwt-decode";
 
 export default {
   setup() {
@@ -51,12 +52,26 @@ export default {
           'Accept': 'application/json'
         }
       }).then((res) => {
-        store.commit('setAccount', res.data.id); //로그인 하고 받은 id 값을 store에 저장하겠다.
-        //sessionStorage.setItem("id", res.data); //지워도 될 듯... sessionStorage 사용하지 않으니까
-        router.push({path: "/"});
-        window.alert("로그인하였습니다.");
+        console.log(res);
+
+        const authToken = res.headers[`authorization`];
+
+        if (authToken) {
+          //localStorage.setItem(`authToken`, authToken);
+          store.commit(`setAuthToken`, authToken);
+
+          const memberId = jwtDecode(authToken).id; //찍힘
+          console.log("memberId는~~~" + memberId);
+          store.commit(`setAccount`, memberId);
+
+          router.push({path: "/"});
+          window.alert("로그인하였습니다.");
+        }
+        else {
+          window.alert("로그인에 실패하였습니다.")
+        }
       }).catch(() => {
-        window.alert("로그인 정보가 존재하지 않습니다.");
+        window.alert("오류가 발생했습니다. 다시 시도해주세요.");
       })
     }
 
@@ -70,8 +85,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-  /* min-height: 400px; */
-  /* height: 70vh; */
+
 }
 
 .card {
