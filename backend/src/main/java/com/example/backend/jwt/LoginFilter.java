@@ -3,6 +3,7 @@ package com.example.backend.jwt;
 import com.example.backend.dto.CustomUserDetails;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -111,11 +112,25 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         //username 변수를 왜 그냥 두었냐면 jwtUtil 때문에.. 어떻게 처리할지 생각
         String token = jwtUtil.createJwt(id, username, role, 60*60*10*1000L);
 
+//        Cookie cookie = new Cookie("Authorization", "Bearer " + token);
+//        cookie.setHttpOnly(true);
+//        cookie.setSecure(true); // Only Https
+//        cookie.setPath("/");
+//        cookie.setMaxAge(60*60*10);
+//
+//        response.addCookie(cookie);
+        Cookie cookie = new Cookie("id", id.toString());
+        cookie.setHttpOnly(true);
+        //cookie.setSecure(true); // Only Https
+        cookie.setPath("/");
+        cookie.setMaxAge(60*60*10);
+
+        response.addCookie(cookie);
+
         //Authorization: Bearer 인증토큰string
         response.addHeader("Authorization", "Bearer " + token);
 
         System.out.println("success~~~~~~~~~~~~~~~~~~~~~~~~");
-
     }
 
     @Override
