@@ -24,7 +24,7 @@ public class AccountController {
     @Autowired
     JwtService jwtService;
 
-    @PostMapping("/api/account/login")
+    @PostMapping("/api/account/loginnnnnnnnnn")
     public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> params,
                                 HttpServletResponse res) {
         Member member = memberRepository.findByEmailAndPassword(params.get("email"), params.get("password"));
