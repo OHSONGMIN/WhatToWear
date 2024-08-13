@@ -3,6 +3,7 @@ package com.example.backend.config;
 import com.example.backend.jwt.JWTFilter;
 import com.example.backend.jwt.JWTUtil;
 import com.example.backend.jwt.LoginFilter;
+import com.example.backend.repository.RefreshRepository;
 import com.example.backend.service.CustomUserDetailsService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.context.annotation.Bean;
@@ -27,11 +28,13 @@ public class SecurityConfig{
 
     private CustomUserDetailsService userDetailsService;
     private JWTUtil jwtUtil;
+    private final RefreshRepository refreshRepository;
 
-    public SecurityConfig(CustomUserDetailsService userDetailsService, JWTUtil jwtUtil) {
+    public SecurityConfig(CustomUserDetailsService userDetailsService, JWTUtil jwtUtil, RefreshRepository refreshRepository) {
 
         this.userDetailsService = userDetailsService;
         this.jwtUtil = jwtUtil;
+        this.refreshRepository = refreshRepository;
     }
 
 
@@ -97,8 +100,9 @@ public class SecurityConfig{
                 .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
 
         String loginUrl = "/api/account/login";
+
         http
-                .addFilterAt(new LoginFilter(authenticationManager, jwtUtil, loginUrl), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManager, jwtUtil, loginUrl, refreshRepository), UsernamePasswordAuthenticationFilter.class);
 
         http
                 .sessionManagement((session) -> session
