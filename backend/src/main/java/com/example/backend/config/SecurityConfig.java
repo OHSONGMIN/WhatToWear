@@ -1,5 +1,6 @@
 package com.example.backend.config;
 
+import com.example.backend.jwt.CustomLogoutFilter;
 import com.example.backend.jwt.JWTFilter;
 import com.example.backend.jwt.JWTUtil;
 import com.example.backend.jwt.LoginFilter;
@@ -104,6 +105,10 @@ public class SecurityConfig{
         http
                 .addFilterAt(new LoginFilter(authenticationManager, jwtUtil, loginUrl, refreshRepository), UsernamePasswordAuthenticationFilter.class);
 
+        http
+                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository), LoginFilter.class);
+
+        // 세션 설정
         http
                 .sessionManagement((session) -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
