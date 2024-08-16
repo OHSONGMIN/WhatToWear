@@ -32,9 +32,9 @@
 <script>
 import {reactive} from "vue";
 import axios from "axios";
-import store from "@/scripts/store";
-import router from "@/scripts/router";
-import {jwtDecode} from "jwt-decode";
+// import store from "@/scripts/store";
+// import router from "@/scripts/router";
+// import {jwtDecode} from "jwt-decode";
 
 export default {
   setup() {
@@ -49,29 +49,28 @@ export default {
       axios.post("/api/account/login", state.form, {
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json'
         }
       }).then((res) => {
         console.log(res);
 
-        const authToken = res.headers[`authorization`];
-
-        if (authToken) {
-          //localStorage.setItem(`authToken`, authToken);
-          store.commit(`setAuthToken`, authToken);
-
-          const memberId = jwtDecode(authToken).id; //찍힘
-          console.log("memberId는~~~" + memberId);
-          store.commit(`setAccount`, memberId);
-
-          router.push({path: "/"});
-          window.alert("로그인하였습니다.");
-        }
-        else {
-          window.alert("로그인에 실패하였습니다.")
-        }
-      }).catch(() => {
-        window.alert("오류가 발생했습니다. 다시 시도해주세요.");
+      //   const authToken = res.headers[`authorization`];
+      //
+      //   if (authToken) {
+      //     //localStorage.setItem(`authToken`, authToken);
+      //     store.commit(`setAuthToken`, authToken);
+      //
+      //     const memberId = jwtDecode(authToken).id; //찍힘
+      //     console.log("memberId는~~~" + memberId);
+      //     store.commit(`setAccount`, memberId);
+      //
+      //     router.push({path: "/"});
+      //     window.alert("로그인하였습니다.");
+      //   }
+      //   else {
+      //     window.alert("로그인에 실패하였습니다.")
+      //   }
+      // }).catch(() => {
+      //   window.alert("오류가 발생했습니다. 다시 시도해주세요.");
       })
     }
 
