@@ -23,7 +23,7 @@ public class Member {
     @Column(length = 100, nullable = false)
     private String password;
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime regdate;
 
     @Column
