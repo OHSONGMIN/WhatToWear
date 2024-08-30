@@ -32,6 +32,7 @@
 <script>
 import {reactive} from "vue";
 import axios from "axios";
+import router from "@/scripts/router";
 // import store from "@/scripts/store";
 // import router from "@/scripts/router";
 // import {jwtDecode} from "jwt-decode";
@@ -53,6 +54,10 @@ export default {
       }).then((res) => {
         console.log(res);
 
+        router.push({path: "/"});
+        window.alert("로그인하였습니다.");
+
+
       //   const authToken = res.headers[`authorization`];
       //
       //   if (authToken) {
@@ -71,6 +76,8 @@ export default {
       //   }
       // }).catch(() => {
       //   window.alert("오류가 발생했습니다. 다시 시도해주세요.");
+      }).catch(() => {
+        window.alert("오류가 발생했습니다. 다시 시도해주세요.");
       })
     }
 
