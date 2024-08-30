@@ -53,7 +53,7 @@ public class AccountController {
         throw new ResponseStatusException(HttpStatus.NOT_FOUND);
     }
 
-    @PostMapping("/api/account/logout")
+    @PostMapping("/api/account/logoutttttt")
     public ResponseEntity logout(HttpServletResponse res) {
         Cookie cookie = new Cookie("token", null);
         cookie.setPath("/");
@@ -63,6 +63,7 @@ public class AccountController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
+    //지워도 되는 감....?
     @GetMapping("/api/account/check")
     public ResponseEntity check(@CookieValue(value = "token", required = false) String token) {
         Claims claims = jwtService.getClaims(token);
