@@ -79,7 +79,7 @@ public class JWTFilter extends OncePerRequestFilter {
         //Member Entity 생성하여 값 set
         Member member = new Member();
         member.setEmail(username);
-        //member.setPassword("temppassword"); //임시 비밀번호, DB에 요청할 필요 없음
+        member.setPassword("temppassword"); //임시 비밀번호, DB에 요청할 필요 없음
         member.setRole(role);
         CustomUserDetails customUserDetails = new CustomUserDetails(member);
 
