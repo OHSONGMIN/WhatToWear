@@ -31,7 +31,7 @@ public class WeatherController {
     @Autowired
     private CacheManager cacheManager;
 
-    @GetMapping("/api/weather")
+    @GetMapping("/api/main/weather")
     public ResponseEntity<?> getWeather(
             @RequestParam double lat, @RequestParam double lon) {
 
@@ -44,7 +44,6 @@ public class WeatherController {
 
         String nowDate = now.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         String nowTime = LocalTime.now().format(DateTimeFormatter.ofPattern("HH00"));
-        //System.out.println("nowDate" + nowDate + "nowTime" + nowTime);
 
         //baseDate는 하루 이전
         String baseDate = now.minusDays(1).format(DateTimeFormatter.ofPattern("yyyyMMdd"));
