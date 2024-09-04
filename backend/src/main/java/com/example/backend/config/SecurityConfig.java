@@ -93,14 +93,15 @@ public class SecurityConfig{
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/admin").hasRole("ADMIN")
-                        .requestMatchers("/api/**").permitAll()
-                        .anyRequest().authenticated());
+                        .requestMatchers("/api/main/**").permitAll()
+                        .requestMatchers("/api/account/**", "/api/outfit/**").hasRole("USER")
+                        .requestMatchers("/admin/**").hasRole("ADMIN")
+                        .anyRequest().authenticated()); //나머지 요청은 인증 필요
 
         http
                 .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
 
-        String loginUrl = "/api/account/login";
+        String loginUrl = "/api/main/login";
 
         http
                 .addFilterAt(new LoginFilter(authenticationManager, jwtUtil, loginUrl, refreshRepository), UsernamePasswordAuthenticationFilter.class);
