@@ -25,7 +25,7 @@ public class SignUpController {
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
 
-    @PostMapping("/api/signup/dupl/{email}")
+    @PostMapping("/api/main/signup/dupl/{email}")
     public ResponseEntity checkDuplEmail(
             @PathVariable("email") String email
     ) {
@@ -34,10 +34,11 @@ public class SignUpController {
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
 
-    @PostMapping("/api/signup")
+    @PostMapping("/api/main/signup")
     public ResponseEntity signUp (@RequestBody MemberDto dto) {
 
         Member newMember = new Member();
+
         newMember.setEmail(dto.getEmail());
         newMember.setPassword(bCryptPasswordEncoder.encode(dto.getPassword())); //비밀번호 암호화
         newMember.setRegdate(LocalDateTime.now());
