@@ -1,9 +1,11 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.CustomUserDetails;
 import com.example.backend.dto.OutfitDto;
 import com.example.backend.entity.Detail;
 import com.example.backend.entity.Outfit;
 import com.example.backend.repository.DetailRepository;
+import com.example.backend.repository.MemberRepository;
 import com.example.backend.repository.OutfitRepository;
 import com.example.backend.service.JwtService;
 import jakarta.persistence.EntityNotFoundException;
@@ -12,6 +14,7 @@ import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -27,17 +30,21 @@ public class OutfitController {
 
     @Autowired
     private OutfitRepository outfitRepository;
+    @Autowired
+    private MemberRepository memberRepository;
 
-    @PostMapping("/api/write")
+    @PostMapping("/api/outfit/write")
     public ResponseEntity pushOutfit(
             @RequestBody OutfitDto dto,
-            @CookieValue(value = "token", required = false) String token) {
+            //@CookieValue(value = "token", required = false) String token
+            @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        if (!jwtService.isValid(token)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        }
-
-        int memberId = jwtService.getId(token);
+//        if (!jwtService.isValid(token)) {
+//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+//        }
+//
+//        int memberId = jwtService.getId(token);
+        int memberId = memberRepository.findByEmail(userDetails.getUsername()).getId();
         Outfit newOutfit = new Outfit();
 
         //1. outfits DB에 먼저 담고 + 나중에 지역, 온도도 추가해야함
@@ -66,7 +73,7 @@ public class OutfitController {
     */
 
 
-    @GetMapping("/api/outfits")
+    @GetMapping("/api/main/outfits")
     public ResponseEntity getOutfits() {
 
         List<Outfit> outfits = outfitRepository.findOutfits();
@@ -90,15 +97,19 @@ public class OutfitController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @GetMapping("/api/history")
+    @GetMapping("/api/outfit/history")
     public ResponseEntity getHistory(
-            @CookieValue(value = "token", required = false) String token
+//            @CookieValue(value = "token", required = false) String token
+            @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-        if (!jwtService.isValid(token)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        }
+//        if (!jwtService.isValid(token)) {
+//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+//        }
+//
+//        int memberId = jwtService.getId(token);
+        String email = userDetails.getUsername();
+        int memberId = memberRepository.findByEmail(email).getId();
 
-        int memberId = jwtService.getId(token);
         List<Outfit> outfits = outfitRepository.findByMemberIdOrderByIdDesc(memberId);
 
         return new ResponseEntity<>(outfits, HttpStatus.OK);
