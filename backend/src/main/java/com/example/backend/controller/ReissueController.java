@@ -33,7 +33,7 @@ public class ReissueController {
         this.refreshRepository = refreshRepository;
     }
 
-    @PostMapping("/api/account/reissue")
+    @PostMapping("/api/main/reissue")
     public ResponseEntity<?> reissue(HttpServletRequest request, HttpServletResponse response) {
 
         //get refresh token
