@@ -8,7 +8,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -23,14 +22,15 @@ public class ItemController {
     @Autowired
     ItemRepository itemRepository;
 
-    @GetMapping("/api/items")
+    @GetMapping("/api/outfit/items")
     public ResponseEntity getItems(
-            @CookieValue(value = "token", required = false) String token
+//            @CookieValue(value = "token", required = true) String token
     ) {
-
-        if (!jwtService.isValid(token)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-        }
+//        System.out.println("token : " + token);
+//
+//        if (!jwtService.isValid(token)) {
+//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+//        }
 
         List<Item> items = itemRepository.findAll();
 
