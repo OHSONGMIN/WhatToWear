@@ -10,13 +10,14 @@ createApp(App).use(store).use(router).mount('#app')
 
 axios.interceptors.request.use(
     (config) => {
-        const accessToken = localStorage.getItem(`access`);
+        const accessToken = sessionStorage.getItem(`access`);
 
         if (accessToken) {
             config.headers[`access`] = `${accessToken}`
-        }
 
+        }
         return config;
+
     },
     (error) => {
         console.log(error);
@@ -33,19 +34,55 @@ axios.interceptors.response.use(
 
         if (newAccessToken) {
 
+            console.log(`Response new111` + newAccessToken);
             //access 토큰을 로컬 스토리지에 저장
-            localStorage.setItem(`access`, newAccessToken);
+            sessionStorage.setItem(`access`, newAccessToken);
         }
+
+        console.log(`Response new222` + newAccessToken);
+
         return response;
     },
-    (error) => {
-        // 404에러 처리
-        if (error.response.status === 404) {
-            
-            console.log(`404페이지만들까만까만들까말까`);
+    async (error) => {
+
+        const originalRequest = error.config;
+
+        if (error.response && error.response.status === 401 && !originalRequest._retry) {
+
+            // 401 오류이고 재시도가 아닌 경우
+            originalRequest._retry = true;
+
+            try {
+                // /api/main/reissue로 access, refresh 재발급 요청
+                const reissueResponse = await axios.post(`/api/main/reissue`);
+
+                if (reissueResponse.status === 200) {
+                    // 재발급 성공
+                    // 새로운 access 토큰을 저장
+                    const newAccessToken = reissueResponse.headers[`access`];
+                    sessionStorage.setItem(`access`, newAccessToken);
+
+                    // 원래의 요청 헤더를 갱신
+                    originalRequest.headers[`access`] = `${newAccessToken}`
+
+                    // 원래의 요청 재시도
+                    return axios(originalRequest);
+                }
+            } catch (reissueError) {
+
+                // 재발급 실패
+                console.error(`토큰 재발급 실패:`, reissueError);
+
+                sessionStorage.removeItem(`access`);
+                router.push({path: "/login"});
+
+                return Promise.reject(reissueError);
+
+
+            }
         }
-        
-        return Promise.reject(error); //에러 다시 던지기
+        return Promise.reject(error);
+
     }
 
 
