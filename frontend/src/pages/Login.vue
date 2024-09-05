@@ -33,27 +33,35 @@
 import {reactive} from "vue";
 import axios from "axios";
 import router from "@/scripts/router";
+import {mapActions, mapGetters} from "vuex";
+import store from "@/scripts/store";
 // import store from "@/scripts/store";
 // import router from "@/scripts/router";
 // import {jwtDecode} from "jwt-decode";
 
 export default {
+  computed: {
+    ...mapGetters([`isLoggedIn`]), //Vuex의 isLoggedIn 상태 사용
+  },
+  methods: {
+    ...mapActions([`logout`]), //Vuex의 logout 액션 사용
+  },
   setup() {
     const state = reactive({
       form: {
         email: "",
         password: ""
-      },
+      }
     })
 
     const submit = () => {
-      axios.post("/api/account/login", state.form, {
+      axios.post("/api/main/login", state.form, {
         headers: {
           'Content-Type': 'application/json',
         }
-      }).then((res) => {
-        console.log(res);
+      }).then(() => {
 
+        store.dispatch(`login`);
         router.push({path: "/"});
         window.alert("로그인하였습니다.");
 
@@ -76,8 +84,9 @@ export default {
       //   }
       // }).catch(() => {
       //   window.alert("오류가 발생했습니다. 다시 시도해주세요.");
-      }).catch(() => {
+      }).catch((error) => {
         window.alert("오류가 발생했습니다. 다시 시도해주세요.");
+        console.log(error);
       })
     }
 

@@ -6,37 +6,58 @@
       </div>
 
       <div class="right">
-        <div v-if="$store.state.account.id" class="nav-item">
+        <div v-if="isLoggedIn" class="nav-item">
           <router-link to="/history">마이페이지</router-link>
         </div>
         <div class="nav-item">
-          <router-link to="/login" v-if="!$store.state.account.id">로그인</router-link>
+<!--          <router-link to="/login" v-if="!$store.state.account.id">로그인</router-link>-->
+          <router-link to="/login" v-if="!isLoggedIn">로그인</router-link>
           <a @click="logout()" v-else>로그아웃</a>
         </div>
       </div>
+<!--      <div>-->
+<!--        스토아 스토아 {{store.state.account.id}}-->
+<!--      </div>-->
     </div>
   </header>
 </template>
 
 <script>
-import store from "@/scripts/store";
 import router from "@/scripts/router";
 import axios from "axios";
+import {mapActions, mapGetters} from "vuex";
+import store from "@/scripts/store";
 
 export default {
   name: 'Header',
+  computed: {
+    ...mapGetters([`isLoggedIn`]), //Vuex의 isLoggedIn 상태 사용
+  },
+  methods: {
+    ...mapActions([`logout`]), //Vuex의 logout 액션 사용
+  },
   setup() {
+    // //상태 관리
+    // const state = reactive({
+    //   isLoggedIn: !!sessionStorage.getItem(`access`)
+    // });
+
     const logout = () => {
-      axios.post("/api/account/logout").then(() => {
-        store.commit("clearAccount");
-        store.commit("clearAuthToken");
+      axios.post("/api/main/logout").then(() => {
+
+        //access 토큰 제거, 상태 업데이트
+        sessionStorage.removeItem(`access`);
+
+        store.dispatch(`logout`);
+
         router.push({path: "/"});
       }).catch(error => {
+
         console.error("로그아웃 실패: " + error);
       })
     }
 
-    return {logout}
+    return { logout };
   }
 }
 </script>
