@@ -1,37 +1,30 @@
 import {createStore} from 'vuex'
-import Cookies from 'js-cookie'
-import axios from "axios";
-import router from "@/scripts/router";
 
 const store = createStore({
-    state() {
-        return {
-            account: {
-                id: Cookies.get(`id`) || 0
-            },
-            authToken: localStorage.getItem(`authToken`) || null
-        }
+    state: {
+        access: sessionStorage.getItem(`access`) || ``,
+        isLoggedIn: !!sessionStorage.getItem(`access`)
     },
     mutations: {
-        setAccount(state, payload) {
-            state.account.id = payload;
-            Cookies.set(`id`, payload, {expires: 7})
-            console.log(state.account.id + "넘어왔나요?")
-        },
-        clearAccount(state) {
-            state.account.id = 0;
-            Cookies.remove(`id`);
-        },
-        setAuthToken(state, token) {
-            state.authToken = token;
-            localStorage.setItem(`authToken`, token);
-        },
-        clearAuthToken(state) {
-            state.authToken = null;
-            localStorage.removeItem(`authToken`);
+        setLoginStatus(state, status) {
+            state.isLoggedIn = status;
         }
     },
+    actions: {
+        login( { commit } ) {
+            //sessionStorage.setItem(`access`, accessToken);
+            commit(`setLoginStatus`, true);
+        },
+        logout( {commit} ) {
+            //sessionStorage.removeItem(`access`);
+            commit(`setLoginStatus`, false);
+        }
+    },
+    getters: {
+        isLoggedIn: state => state.isLoggedIn
+    }
 
+/*
     actions: {
         // 로그인 시도
         login({ dispatch }, loginObj) {
@@ -76,7 +69,7 @@ const store = createStore({
                     alert("이메일과 비밀번호를 확인해주세요.")
                 })
         }
-    }
+    }*/
 })
 /*
 
