@@ -5,7 +5,7 @@
   </div>
 
   <div class="col" v-for="outfit in state.outfits" :key="outfit.id">
-    <Card :outfit="outfit" @deleted="load"/> <!-- outfit이라는 이름으로 outfit객체를 전달-->
+    <Card :outfit="outfit" @deleted="load"/>
     <!-- Card 컴포넌트에서 발생한 deleted 이벤트를 수신 -->
   </div>
 
@@ -13,7 +13,7 @@
     <Write v-if="modalStatus" @sendClose="closeModal" @sendLoad="load" :address="state.address"></Write>
   </div>
 
-  <div v-if="$store.state.account.id">
+  <div v-if="isLoggedIn">
     <button type="button" class="fixed-button" @click="openModal"><i class="bi bi-pencil"></i></button>
   </div>
   <div v-else>
@@ -29,10 +29,15 @@ import {reactive, ref} from "vue";
 import Card from "@/components/Card.vue";
 import Write from "@/components/Write.vue";
 import Weather from "@/components/Weather.vue";
+import {mapGetters} from "vuex";
 
 export default {
   name: "Home",
+  computed: {
+    ...mapGetters([`isLoggedIn`]),
+  },
   components: {Card, Write, Weather},
+
   setup() {
     const state = reactive({
       outfits: [],
@@ -41,7 +46,7 @@ export default {
     })
 
     const load = () => {
-      axios.get("/api/outfits").then((res) => {
+      axios.get("/api/main/outfits").then((res) => {
         state.outfits = res.data;
       })
     }
@@ -60,14 +65,14 @@ export default {
             .then(({data}) => {
               //axios.get(`https://nominatim.openstreetmap.org/reverse?format=json&lat=37.514575&lon=127.0495556`).then(({data}) => {
               state.address = data.address;
-              console.log("내 주소라고용..", state.address);
+              //console.log("내 주소라고용..", state.address);
             })
             .catch((error) => {
               console.error("Reverse Geocoding API 호출 실패:", error);
               state.address = "위치 정보를 불러올 수 없습니다.";
             })
 
-        axios.get(`/api/weather?lat=${lat}&lon=${lon}`).then((res) => {
+        axios.get(`/api/main/weather?lat=${lat}&lon=${lon}`).then((res) => {
           /* POP, SKY, TMP 1시간 단위로 출력됨
            * POP	강수확률	% ★
            * SKY	하늘상태	코드값 ★
@@ -109,7 +114,7 @@ export default {
           } else {
 
             state.weatherData = null;
-            console.log(state.weatherData + "null 마잔요?11");
+            //console.log(state.weatherData + "null 마잔요?11");
 
           }
 
@@ -118,7 +123,7 @@ export default {
             .catch((error) => {
               console.error("Weather API 호출 실패:", error);
               state.weatherData = null;
-              console.log(state.weatherData + "null 마잔요?22");
+              //console.log(state.weatherData + "null 마잔요?22");
             })
       })
     };
