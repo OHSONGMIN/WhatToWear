@@ -20,6 +20,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -82,19 +83,36 @@ public class OutfitController {
     }
 
     @Transactional
-    @PatchMapping("/api/outfit/{outfitId}")
+    @PatchMapping("/api/delOutfit/{outfitId}")
     public ResponseEntity deleteOutfit(
             @PathVariable("outfitId") int outfitId,
-            @CookieValue(value = "token", required = false) String token
+            @AuthenticationPrincipal CustomUserDetails userDetails
+            //@CookieValue(value = "token", required = false) String token
     ) {
-        if (!jwtService.isValid(token)) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+//        if (!jwtService.isValid(token)) {
+//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+//        }
+
+        int memberId = memberRepository.findByEmail(userDetails.getUsername()).getId();
+
+        Outfit outfit = outfitRepository.findById(outfitId);
+
+        // outfit이 존재하지 않을 경우
+        if (outfit == null) {
+            return new ResponseEntity<>("Outfit not found", HttpStatus.NOT_FOUND);
         }
 
-        Outfit outfit = outfitRepository.findById(outfitId).orElseThrow(() -> new EntityNotFoundException("Outfit not found"));
-        outfit.setDelStatus(1);
-
-        return new ResponseEntity<>(HttpStatus.OK);
+        // outfit의 memberId와 token의 email로 불러온 memberId가 일치하는지 확인
+        if (outfit.getMemberId() == memberId) {
+            // delStatus를 1로 업데이트
+            outfit.setDelStatus(1);
+            outfitRepository.save(outfit);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        else {
+            // 권한이 없으면 403 반환 (memberId가 다름)
+            return new ResponseEntity<>("리뷰 삭제 권한이 없습니다", HttpStatus.FORBIDDEN);
+        }
     }
 
     @GetMapping("/api/outfit/history")
