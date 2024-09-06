@@ -1,14 +1,17 @@
 package com.example.backend.controller;
 
+import com.example.backend.dto.CustomUserDetails;
 import com.example.backend.entity.Member;
 import com.example.backend.repository.MemberRepository;
 import com.example.backend.service.JwtService;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -23,6 +26,14 @@ public class AccountController {
 
     @Autowired
     JwtService jwtService;
+
+    @GetMapping("/api/account/info")
+    public ResponseEntity getInfo(@AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        int memberId = memberRepository.findByEmail(userDetails.getUsername()).getId();
+
+        return new ResponseEntity<>(memberId, HttpStatus.OK);
+    }
 
     @PostMapping("/api/account/loginnnnnnnnnn")
     public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> params,
@@ -63,7 +74,7 @@ public class AccountController {
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    //지워도 되는 감....?
+
     @GetMapping("/api/account/check")
     public ResponseEntity check(@CookieValue(value = "token", required = false) String token) {
         Claims claims = jwtService.getClaims(token);
