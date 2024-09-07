@@ -39,47 +39,73 @@ axios.interceptors.response.use(
             sessionStorage.setItem(`access`, newAccessToken);
         }
 
-        console.log(`Response new222` + newAccessToken);
+        console.log(`newAccessToken은 없음`);
 
         return response;
+
     },
     async (error) => {
 
         const originalRequest = error.config;
 
-        if (error.response && error.response.status === 401 && !originalRequest._retry) {
+        if (error.response) {
+            const status = error.response.status;
 
-            // 401 오류이고 재시도가 아닌 경우
-            originalRequest._retry = true;
+            // 401 에러 && 재시도가 아닌 경우
+            if (status === 401 && !originalRequest._retry) {
+                originalRequest._retry = true;
 
-            try {
-                // /api/main/reissue로 access, refresh 재발급 요청
-                const reissueResponse = await axios.post(`/api/main/reissue`);
+                try {
+                    // refresh, access Token 재발급
+                    const reissueResponse = await axios.post(`/api/main/reissue`);
 
-                if (reissueResponse.status === 200) {
-                    // 재발급 성공
-                    // 새로운 access 토큰을 저장
-                    const newAccessToken = reissueResponse.headers[`access`];
-                    sessionStorage.setItem(`access`, newAccessToken);
+                    if (reissueResponse.status === 200) {
+                        // 재발급 성공
+                        // 새로운 access 토큰을 저장
+                        const newAccessToken = reissueResponse.headers[`access`];
+                        sessionStorage.setItem(`access`, newAccessToken);
 
-                    // 원래의 요청 헤더를 갱신
-                    originalRequest.headers[`access`] = `${newAccessToken}`
+                        // 원래의 요청 헤더를 갱신
+                        originalRequest.headers[`access`] = `${newAccessToken}`
 
-                    // 원래의 요청 재시도
-                    return axios(originalRequest);
+                        // 원래의 요청 재시도
+                        return axios(originalRequest);
+                    }
+                } catch (reissueError) {
+                    // 재발급 실패
+                    console.error(`토큰 재발급 실패:`, reissueError);
+
+                    sessionStorage.removeItem(`access`);
+                    router.push({path: "/login"});
+
+                    return Promise.reject(reissueError);
                 }
-            } catch (reissueError) {
-
-                // 재발급 실패
-                console.error(`토큰 재발급 실패:`, reissueError);
-
-                sessionStorage.removeItem(`access`);
-                router.push({path: "/login"});
-
-                return Promise.reject(reissueError);
-
-
             }
+
+            // 403 에러 Forbidden
+            if (status === 403) {
+                console.error(`403 Error`, error);
+                alert('이 리소스에 접근할 권한이 없습니다.');
+
+                router.push({path: "/"});
+            }
+
+            // 404 에러 Not Found
+            if (status === 404) {
+                console.error(`404 Error`, error);
+                alert(`요청한 리소스를 찾을 수 없습니다.`)
+            }
+
+            // 500 에러 Internal Server Error
+            if (status === 500) {
+                console.error(`500 Error`, error);
+                //alert('서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
+            }
+        }
+        else {
+            // 네트워크 또는 다른 이유로 응답을 받지 못한 경우
+            console.error(`응답을 받지 못했습니다:`, error);
+            alert('서버와의 연결이 원활하지 않습니다. 네트워크 상태를 확인해주세요.');
         }
         return Promise.reject(error);
 
