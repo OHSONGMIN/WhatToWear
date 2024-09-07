@@ -12,12 +12,8 @@ public interface OutfitRepository extends JpaRepository<Outfit, Integer> {
     @Query("SELECT o FROM Outfit o WHERE o.delStatus = 0 ORDER BY o.id DESC")
     List<Outfit> findOutfits();
 
+    @Query("SELECT o FROM Outfit o WHERE o.delStatus = 0 AND o.memberId = :memberId ORDER BY o.id DESC")
     List<Outfit> findByMemberIdOrderByIdDesc(int memberId);
 
     Outfit findById(int id);
-
-//    @Query("SELECT o FROM Outfit o JOIN FETCH o.details d JOIN FETCH d.item")
-//    List<Outfit> findOutfitsWithDetails();
-
-    //void updateDelStatus(int outfitId, int i);
 }
