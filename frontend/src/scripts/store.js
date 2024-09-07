@@ -3,11 +3,15 @@ import {createStore} from 'vuex'
 const store = createStore({
     state: {
         access: sessionStorage.getItem(`access`) || ``,
-        isLoggedIn: !!sessionStorage.getItem(`access`)
+        isLoggedIn: !!sessionStorage.getItem(`access`),
+        memberId: sessionStorage.getItem(`memberId`) || 0
     },
     mutations: {
         setLoginStatus(state, status) {
             state.isLoggedIn = status;
+        },
+        setMemberId(state, memberId) {
+            state.memberId = memberId;
         }
     },
     actions: {
@@ -18,10 +22,15 @@ const store = createStore({
         logout( {commit} ) {
             //sessionStorage.removeItem(`access`);
             commit(`setLoginStatus`, false);
+        },
+        setId( {commit} , memberId) {
+            commit(`setMemberId`, memberId);
         }
+
     },
     getters: {
-        isLoggedIn: state => state.isLoggedIn
+        isLoggedIn: state => state.isLoggedIn,
+        getMemberId: state => state.memberId
     }
 
 /*
