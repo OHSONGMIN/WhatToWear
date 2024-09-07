@@ -37,14 +37,8 @@ public class OutfitController {
     @PostMapping("/api/outfit/write")
     public ResponseEntity pushOutfit(
             @RequestBody OutfitDto dto,
-            //@CookieValue(value = "token", required = false) String token
             @AuthenticationPrincipal CustomUserDetails userDetails) {
 
-//        if (!jwtService.isValid(token)) {
-//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-//        }
-//
-//        int memberId = jwtService.getId(token);
         int memberId = memberRepository.findByEmail(userDetails.getUsername()).getId();
         Outfit newOutfit = new Outfit();
 
@@ -62,16 +56,6 @@ public class OutfitController {
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
-/*
-    private void saveDetails(int outfitId, int[] itemIds) {
-        for (Integer itemId : itemIds) {
-            Detail newDetail = new Detail();
-            newDetail.setOutfitId(outfitId);
-            newDetail.setItemId(itemId);
-            detailRepository.save(newDetail);
-        }
-    }
-    */
 
 
     @GetMapping("/api/main/outfits")
@@ -87,11 +71,7 @@ public class OutfitController {
     public ResponseEntity deleteOutfit(
             @PathVariable("outfitId") int outfitId,
             @AuthenticationPrincipal CustomUserDetails userDetails
-            //@CookieValue(value = "token", required = false) String token
     ) {
-//        if (!jwtService.isValid(token)) {
-//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-//        }
 
         int memberId = memberRepository.findByEmail(userDetails.getUsername()).getId();
 
@@ -108,8 +88,7 @@ public class OutfitController {
             outfit.setDelStatus(1);
             outfitRepository.save(outfit);
             return new ResponseEntity<>(HttpStatus.OK);
-        }
-        else {
+        } else {
             // 권한이 없으면 403 반환 (memberId가 다름)
             return new ResponseEntity<>("리뷰 삭제 권한이 없습니다", HttpStatus.FORBIDDEN);
         }
@@ -117,16 +96,10 @@ public class OutfitController {
 
     @GetMapping("/api/outfit/history")
     public ResponseEntity getHistory(
-//            @CookieValue(value = "token", required = false) String token
             @AuthenticationPrincipal CustomUserDetails userDetails
     ) {
-//        if (!jwtService.isValid(token)) {
-//            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
-//        }
-//
-//        int memberId = jwtService.getId(token);
-        String email = userDetails.getUsername();
-        int memberId = memberRepository.findByEmail(email).getId();
+
+        int memberId = memberRepository.findByEmail(userDetails.getUsername()).getId();
 
         List<Outfit> outfits = outfitRepository.findByMemberIdOrderByIdDesc(memberId);
 
