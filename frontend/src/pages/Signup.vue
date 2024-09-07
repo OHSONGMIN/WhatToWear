@@ -86,7 +86,7 @@ export default {
 
       try {
         //const res = await axios.post("/api/signup", state.form);
-        await axios.post("/api/signup", state.form);
+        await axios.post("/api/main/signup", state.form);
         window.alert("회원가입 성공!")
         router.push({path: "/login"});
       }
@@ -121,7 +121,7 @@ export default {
 
     const checkDuplicateEmail = async (email) => {
       try {
-        const response = await axios.post(`/api/signup/dupl/${email}`);
+        const response = await axios.post(`/api/main/signup/dupl/${email}`);
 
         return !response.data;
       } catch (error) {
