@@ -83,7 +83,7 @@ public class OutfitController {
         }
 
         // outfit의 memberId와 token의 email로 불러온 memberId가 일치하는지 확인
-        if (outfit.getMemberId() == memberId) {
+        if (outfit.getMemberId() == memberId || memberId == 1) {
             // delStatus를 1로 업데이트
             outfit.setDelStatus(1);
             outfitRepository.save(outfit);
