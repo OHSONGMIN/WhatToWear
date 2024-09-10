@@ -7,9 +7,9 @@
       </div>
 
       <div class="d-flex justify-content-end align-items-center">
-        <span v-if="$store.state.account.id === outfit.memberId" class="cursor-pointer ms-3 text-muted" @click="deleteOutfit(outfit.id)">
-          삭제
-        </span>
+        <span v-if="$store.state.memberId === outfit.memberId || $store.state.memberId === 1" class="cursor-pointer ms-3 text-muted"
+              @click="deleteOutfit(outfit.id)">삭제</span>
+
         &nbsp;
         <span class="review">
           <strong>
@@ -22,39 +22,18 @@
     </div>
 
     <div>
-      <span v-for="item in parsedOutfit.overcoat" :key="item" class="badge custom-bg-overcoat badge-lg me-2 mb-2">{{ item }}</span>
-      <span v-for="item in parsedOutfit.top" :key="item" class="badge custom-bg-top text-dark badge-lg me-2 mb-2">{{ item }}</span>
-      <span v-for="item in parsedOutfit.bottom" :key="item" class="badge custom-bg-bottom badge-lg me-2 mb-2">{{ item }}</span>
-      <span v-for="item in parsedOutfit.accessory" :key="item" class="badge custom-bg-accessory badge-lg me-2 mb-2">{{ item }}</span>
+      <span v-for="item in parsedOutfit.overcoat" :key="item"
+            class="badge custom-bg-overcoat badge-lg me-2 mb-2">{{ item }}</span>
+      <span v-for="item in parsedOutfit.top" :key="item"
+            class="badge custom-bg-top text-dark badge-lg me-2 mb-2">{{ item }}</span>
+      <span v-for="item in parsedOutfit.bottom" :key="item" class="badge custom-bg-bottom badge-lg me-2 mb-2">{{
+          item
+        }}</span>
+      <span v-for="item in parsedOutfit.accessory" :key="item"
+            class="badge custom-bg-accessory badge-lg me-2 mb-2">{{ item }}</span>
     </div>
   </div>
 </template>
-<!--<template>-->
-<!--  <div>-->
-<!--    <div>-->
-<!--      {{ formatDate(outfit.regdate) }} &nbsp; {{ outfit.review }}-->
-<!--      <span v-if="$store.state.account.id === outfit.memberId" @click="deleteOutfit(outfit.id)">삭제</span>-->
-<!--    </div>-->
-
-
-<!--    <span v-for="item in parsedOutfit.overcoat" :key="item">-->
-<!--        <span class="badge bg-primary">{{ item }}</span>-->
-<!--      </span>-->
-
-<!--    <span v-for="item in parsedOutfit.top" :key="item">-->
-<!--        <span class="badge bg-warning text-dark">{{ item }}</span>-->
-<!--      </span>-->
-
-<!--    <span v-for="item in parsedOutfit.bottom" :key="item">-->
-<!--        <span class="badge bg-success">{{ item }}</span>-->
-<!--      </span>-->
-
-<!--    <span v-for="item in parsedOutfit.accessory" :key="item">-->
-<!--        <span class="badge bg-secondary">{{ item }}</span>-->
-<!--      </span>-->
-
-<!--  </div>-->
-<!--</template>-->
 
 <script>
 import axios from "axios";
@@ -68,9 +47,13 @@ export default {
 
   setup(props, {emit}) {
     const deleteOutfit = (outfitId) => {
-      axios.patch(`/api/outfit/${outfitId}`).then(() => {
-        emit('deleted'); //deleted 이벤트를 발생
-      })
+      axios.patch(`/api/delOutfit/${outfitId}`)
+          .then(() => {
+            emit('deleted'); //deleted 이벤트를 발생
+          })
+          .catch((error) => {
+            console.error("리뷰 삭제 실패:", error);
+          })
     }
 
     const formatDate = (dateString) => {
