@@ -93,7 +93,7 @@ public class SecurityConfig{
 
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/api/main/**").permitAll()
+                        .requestMatchers("/api/main/**", "/api/main/reissue").permitAll()
                         .requestMatchers("/api/account/**", "/api/outfit/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/admin/**").hasRole("ADMIN")
                         .anyRequest().authenticated()); //나머지 요청은 인증 필요
