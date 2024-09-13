@@ -27,6 +27,13 @@ public class JWTFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
 
+        // "/api/main/reissue" 라면 다음 필터로 넘김
+        String requestURI = request.getRequestURI();
+        if ("/api/main/reissue".equals(requestURI)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         // 헤더에서 access키에 담긴 토큰을 꺼냄
         String accessToken = request.getHeader("access");
 
@@ -44,10 +51,9 @@ public class JWTFilter extends OncePerRequestFilter {
             jwtUtil.isExpired(accessToken);
 
         } catch (ExpiredJwtException e) {
-
             //response body
             PrintWriter writer = response.getWriter();
-            writer.print("access token expired");
+            writer.print("access token expired - JWTFilter");
 
             //response status code
             response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
@@ -55,7 +61,7 @@ public class JWTFilter extends OncePerRequestFilter {
         } // 토큰이 만료되면 토큰이 없을 때처럼
           // 다음 필터로 넘기지 않고 응답 코드를 발생시켜서 토큰이 만료되었다고 응답
 
-        //토큰이 있고, 만료되지 않았다면
+        // 토큰이 있고, 만료되지 않았다면
         // 토큰이 access인지 확인 (발급시 페이로드에 명시)
         String category = jwtUtil.getCategory(accessToken);
 
