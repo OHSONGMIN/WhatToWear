@@ -62,31 +62,28 @@ export default {
       }).then(() => {
 
         store.dispatch(`login`);
+
+        // member Entity의 Id 가져오기
+        axios.get("/api/account/info")
+            .then((userInfoResponse) => {
+              console.log("Res" + userInfoResponse.data);
+              const memberId = userInfoResponse.data; //나중에 memberId 말고 다른 info를 불러오고싶다면 수정해야함
+              store.dispatch(`setId`, memberId);
+              console.log("멤버 아이디는~~~~~~~~~~~~~~~~~~" + memberId);
+            })
+            .catch((error) => {
+              console.error("memberId 가져오기 실패", error);
+              window.alert("회원 데이터를 가져오는 데 실패했습니다.");
+            })
+
         router.push({path: "/"});
         window.alert("로그인하였습니다.");
 
-
-      //   const authToken = res.headers[`authorization`];
-      //
-      //   if (authToken) {
-      //     //localStorage.setItem(`authToken`, authToken);
-      //     store.commit(`setAuthToken`, authToken);
-      //
-      //     const memberId = jwtDecode(authToken).id; //찍힘
-      //     console.log("memberId는~~~" + memberId);
-      //     store.commit(`setAccount`, memberId);
-      //
-      //     router.push({path: "/"});
-      //     window.alert("로그인하였습니다.");
-      //   }
-      //   else {
-      //     window.alert("로그인에 실패하였습니다.")
-      //   }
-      // }).catch(() => {
-      //   window.alert("오류가 발생했습니다. 다시 시도해주세요.");
       }).catch((error) => {
+
         window.alert("오류가 발생했습니다. 다시 시도해주세요.");
         console.log(error);
+
       })
     }
 
