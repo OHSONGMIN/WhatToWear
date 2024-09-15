@@ -20,25 +20,14 @@ export default {
     })
 
     const load = () => {
-      axios.get("/api/history").then((res) => {
+      axios.get("/api/outfit/history").then((res) => {
         state.history = res.data;
       })
     }
 
     load();
 
-    // axios.get("/api/history").then(({data}) => {
-    //   state.history = [];
-    //
-    //   for (let d of data) {
-    //     if(d.items) {
-    //       d.items = JSON.parse(d.items);
-    //     }
-    //     state.history.push(d);
-    //   }
-    // })
-
-    return {state};
+    return { state, load };
   }
 }
 </script>

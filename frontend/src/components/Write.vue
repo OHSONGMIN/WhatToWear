@@ -127,14 +127,16 @@ export default {
       },
     });
 
-    axios.get("/api/items").then(({data}) => {
+    axios.get("/api/outfit/items").then(({data}) => {
       console.log("응답 데이터 확인", data);
       state.overcoatItems = data.filter(item => item.category === 1);
       state.topItems = data.filter(item => item.category === 2);
       state.bottomItems = data.filter(item => item.category === 3);
       state.accessoryItems = data.filter(item => item.category === 4);
+
     }).catch(error => {
       console.error("데이터를 불러오는 중 에러 발생:", error);
+
     });
 
     const submit = () => {
@@ -143,21 +145,17 @@ export default {
       args.top = JSON.stringify(state.selectedTop);
       args.bottom = JSON.stringify(state.seletedBottom);
       args.accessory = JSON.stringify(state.seletedAcc);
-
-      console.log("주소 받아왔어? " + props.address.city);
-      //const city = props.address.city || "알 수 없음";
-      //const borough = props.address.borough || "";
-      //args.address = `${city} ${borough}`.trim(); // 공백 제거
-      //console.log("주소 결합 " + args.address);
       args.address = props.address.city || "알 수 없음";
 
-      axios.post("/api/write", args).then(() => {
-        alert("작성 완료!!");
-        emit(`sendClose`);
-        emit(`sendLoad`);
-      }).catch(error => {
-        console.error("작성 중 에러 발생:", error);
-      });
+      axios.post("/api/outfit/write", args)
+          .then(() => {
+            alert("리뷰 작성 완료!");
+            emit(`sendClose`);
+            emit(`sendLoad`);
+          })
+          .catch(error => {
+            console.error("작성 중 에러 발생:", error);
+          });
     };
 
     //다중 선택
