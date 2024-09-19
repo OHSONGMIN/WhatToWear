@@ -7,17 +7,22 @@
 
       <div class="right">
         <div v-if="isLoggedIn" class="nav-item">
-          <router-link to="/history">마이페이지</router-link>
+          <div v-if="getMemberId !== 1">
+            <router-link to="/history">마이페이지</router-link>
+          </div>
+          <div v-else>
+            <router-link to="/admin">[관리자 페이지]</router-link>
+          </div>
         </div>
+
         <div class="nav-item">
-<!--          <router-link to="/login" v-if="!$store.state.account.id">로그인</router-link>-->
           <router-link to="/login" v-if="!isLoggedIn">로그인</router-link>
           <a @click="logout()" v-else>로그아웃</a>
         </div>
       </div>
-<!--      <div>-->
-<!--        스토아 스토아 {{store.state.account.id}}-->
-<!--      </div>-->
+      <!--      <div>-->
+      <!--        스토아 스토아 {{store.state.memberId}}-->
+      <!--      </div>-->
     </div>
   </header>
 </template>
@@ -32,6 +37,7 @@ export default {
   name: 'Header',
   computed: {
     ...mapGetters([`isLoggedIn`]), //Vuex의 isLoggedIn 상태 사용
+    ...mapGetters([`getMemberId`]), //Vuex의 isLoggedIn 상태 사용
   },
   methods: {
     ...mapActions([`logout`]), //Vuex의 logout 액션 사용
@@ -45,11 +51,11 @@ export default {
     const logout = () => {
       axios.post("/api/main/logout").then(() => {
 
-        //access 토큰 제거, 상태 업데이트
+        // access 토큰 제거, 상태 업데이트
         sessionStorage.removeItem(`access`);
-
         store.dispatch(`logout`);
 
+        // 메인 페이지로 이동
         router.push({path: "/"});
       }).catch(error => {
 
@@ -57,7 +63,7 @@ export default {
       })
     }
 
-    return { logout };
+    return {logout};
   }
 }
 </script>
