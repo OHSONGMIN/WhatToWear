@@ -66,21 +66,46 @@ export default {
         // member Entity의 Id 가져오기
         axios.get("/api/account/info")
             .then((userInfoResponse) => {
-              console.log("Res" + userInfoResponse.data);
-              const memberId = userInfoResponse.data; //나중에 memberId 말고 다른 info를 불러오고싶다면 수정해야함
+              console.log("userInfoResponse " + userInfoResponse.data);
+
+              const { memberId } = userInfoResponse.data;
               store.dispatch(`setId`, memberId);
-              console.log("멤버 아이디는~~~~~~~~~~~~~~~~~~" + memberId);
+
+              if (memberId === 1) {
+
+                //관리자 권한 확인
+                axios.get("/api/account/check_admin")
+                    .then((res) => {
+                      const isAdmin = res.data;
+                      console.log("isAdmin " + isAdmin);
+
+                      if (isAdmin) {
+                        router.push({path: "/admin"});
+                        window.alert("관리자로 접속하였습니다.");
+                      }
+                      else {
+                        router.push({path: "/"});
+                        window.alert("로그인 되었습니다.");
+                      }
+                    })
+                    .catch((error) => {
+                      console.error("권한 확인 실패", error);
+                      window.alert("권환 확인 중 오류가 발생했습니다.");
+                    })
+              }
+              // 일반 유저일 경우
+              else {
+                router.push({path: "/"});
+                window.alert("로그인 되었습니다.")
+              }
             })
             .catch((error) => {
-              console.error("memberId 가져오기 실패", error);
+              console.error("memberInfo 가져오기 실패", error);
               window.alert("회원 데이터를 가져오는 데 실패했습니다.");
             })
 
-        router.push({path: "/"});
-        window.alert("로그인하였습니다.");
 
       }).catch((error) => {
-
         window.alert("오류가 발생했습니다. 다시 시도해주세요.");
         console.log(error);
 
