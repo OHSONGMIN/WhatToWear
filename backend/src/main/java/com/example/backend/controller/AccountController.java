@@ -1,6 +1,7 @@
 package com.example.backend.controller;
 
 import com.example.backend.dto.CustomUserDetails;
+import com.example.backend.dto.MemberInfoDto;
 import com.example.backend.entity.Member;
 import com.example.backend.repository.MemberRepository;
 import com.example.backend.service.JwtService;
@@ -30,9 +31,31 @@ public class AccountController {
     @GetMapping("/api/account/info")
     public ResponseEntity getInfo(@AuthenticationPrincipal CustomUserDetails userDetails) {
 
-        int memberId = memberRepository.findByEmail(userDetails.getUsername()).getId();
+        Member member = memberRepository.findByEmail(userDetails.getUsername());
+        int memberId = member.getId();
+        //String role = member.getRole();
 
-        return new ResponseEntity<>(memberId, HttpStatus.OK);
+        //MemberInfoDto memberInfo = new MemberInfoDto(memberId, role);
+        MemberInfoDto memberInfo = new MemberInfoDto(memberId);
+
+        return new ResponseEntity<>(memberInfo, HttpStatus.OK);
+    }
+
+    @GetMapping("/api/account/check_admin")
+    public ResponseEntity getCheckAdmin(@AuthenticationPrincipal CustomUserDetails userDetails) {
+
+        Member member = memberRepository.findByEmail(userDetails.getUsername());
+        String role = member.getRole();
+
+        if (role.equals("ROLE_ADMIN")) {
+
+            return new ResponseEntity<>(true, HttpStatus.OK);
+        }
+        else {
+
+            return new ResponseEntity<>(false, HttpStatus.OK);
+        }
+
     }
 
     @PostMapping("/api/account/loginnnnnnnnnn")
