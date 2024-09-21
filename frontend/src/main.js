@@ -6,6 +6,12 @@ import App from './App.vue'
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import axios from "axios";
 
+//sessionStorage에서 memberId를 가져와 Vuex에 저장
+const saveMemberId = sessionStorage.getItem(`memberId`);
+if (saveMemberId) {
+    store.commit(`setMemberId`, parseInt(saveMemberId));
+}
+
 createApp(App).use(store).use(router).mount('#app')
 
 axios.interceptors.request.use(
@@ -46,18 +52,31 @@ axios.interceptors.response.use(
     },
     async (error) => {
 
+        console.log("request 하다가 에러 발생");
         const originalRequest = error.config;
 
         if (error.response) {
             const status = error.response.status;
 
+            //console.log("재시도 전" + originalRequest._retry);
+
+            // if (status === 419) {
+            //
+            //     router.push({path: "/login"});
+            // }
+
             // 401 에러 && 재시도가 아닌 경우
             if (status === 401 && !originalRequest._retry) {
                 originalRequest._retry = true;
 
+                console.log("재시도 시작" + originalRequest._retry);
+
                 try {
                     // refresh, access Token 재발급
+                    console.log("reissue 호출");
                     const reissueResponse = await axios.post(`/api/main/reissue`);
+                    console.log("reissue 호출 완료");
+
 
                     if (reissueResponse.status === 200) {
                         // 재발급 성공
@@ -68,8 +87,14 @@ axios.interceptors.response.use(
                         // 원래의 요청 헤더를 갱신
                         originalRequest.headers[`access`] = `${newAccessToken}`
 
+                        console.log("토큰 재발급 성공");
+
                         // 원래의 요청 재시도
                         return axios(originalRequest);
+                    } else {
+                        console.log("상태 코드가 200이 아님");
+                        sessionStorage.removeItem(`access`);
+                        return Promise.reject(reissueResponse);
                     }
                 } catch (reissueError) {
                     // 재발급 실패
@@ -77,7 +102,6 @@ axios.interceptors.response.use(
 
                     sessionStorage.removeItem(`access`);
                     router.push({path: "/login"});
-
                     return Promise.reject(reissueError);
                 }
             }
