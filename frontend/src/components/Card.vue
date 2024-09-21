@@ -4,11 +4,16 @@
       <div class="d-flex align-items-center">
         <span class="text-muted">{{ formatDate(outfit.regdate) }}</span> &nbsp; &nbsp;
         <span class="text-muted">{{ outfit.region }}</span>
+        {{ memberId }}는 멤버아이디
+        {{ outfit.memberId }}는 아웃핏 멤버아이디
+
       </div>
 
       <div class="d-flex justify-content-end align-items-center">
-        <span v-if="$store.state.memberId === outfit.memberId || $store.state.memberId === 1" class="cursor-pointer ms-3 text-muted"
-              @click="deleteOutfit(outfit.id)">삭제</span>
+<!--        <span v-if="$store.state.memberId === outfit.memberId || $store.state.memberId === 1" class="cursor-pointer ms-3 text-muted"-->
+<!--              @click="deleteOutfit(outfit.id)">삭제</span>-->
+        <span v-if="memberId === outfit.memberId || memberId === 1" class="cursor-pointer ms-3 text-muted"
+              @click="deleteOutfit(outfit.id)">{{ memberId }} 삭제</span>
 
         &nbsp;
         <span class="review">
@@ -38,11 +43,17 @@
 <script>
 import axios from "axios";
 import {format} from "date-fns";
+import {mapState} from "vuex";
+
 
 export default {
   name: "Card",
   props: {
     outfit: Object
+  },
+  computed: {
+    // Vuex state에서 memberId를 가져옴
+    ...mapState([`memberId`]),
   },
 
   setup(props, {emit}) {
