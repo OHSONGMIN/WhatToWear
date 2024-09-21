@@ -1,10 +1,26 @@
 import {createStore} from 'vuex'
 
+/*
+
+현재 문제점...
+isLoggedIn은 access 토큰 여부로 확인하고.. main.js에서 토큰 만료하면 새로 등록하는 과정을 거치기 떄문에???
+isLoggedIn 상태가 유지되고...
+
+memberId는 새로고침하면 리셋된다.
+유지되지 않는듯.... 이를 어떻게 해결하면 좋을지 토큰에서 가져와야하는가..?
+
+문제 해결... 어떻게 해결했냐면
+Vuex가 초기화될 때 상태 복원이 정확하게 이루어지는지 확인하고, 그 값이 컴포넌트에 반영되어야 한다.
+
+1. main.js에서 memberId를 복수하는 코드를 작성하였다.
+2. parseInt 하는 과정도 필요했다. (String으로 출력됐었던 듯)
+
+ */
 const store = createStore({
     state: {
         access: sessionStorage.getItem(`access`) || ``,
         isLoggedIn: !!sessionStorage.getItem(`access`),
-        memberId: sessionStorage.getItem(`memberId`) || 0
+        memberId: sessionStorage.getItem(`memberId`) || 0,
     },
     mutations: {
         setLoginStatus(state, status) {
@@ -17,13 +33,17 @@ const store = createStore({
     actions: {
         login( { commit } ) {
             //sessionStorage.setItem(`access`, accessToken);
+            sessionStorage.setItem(`isLoggedIn`, true);
             commit(`setLoginStatus`, true);
         },
         logout( {commit} ) {
             //sessionStorage.removeItem(`access`);
+            sessionStorage.removeItem(`memberId`);
             commit(`setLoginStatus`, false);
+            commit(`setMemberId`, 0);
         },
         setId( {commit} , memberId) {
+            sessionStorage.setItem(`memberId`, memberId);
             commit(`setMemberId`, memberId);
         }
 
@@ -33,52 +53,7 @@ const store = createStore({
         getMemberId: state => state.memberId
     }
 
-/*
-    actions: {
-        // 로그인 시도
-        login({ dispatch }, loginObj) {
-            // 로그인 -> 토큰 반환
-            axios.post("/api/account/login", loginObj)
-                .then(res => {
-                    // 성공 시 token: 실제로는 memberId값을 받아온다
-                    // 토큰을 헤더에 포함시켜서 유저 정보를 요청
-                    let access = res.headers.get("access")
-                    // 토큰을 로컬스토리지에 저장
-                    localStorage.setItem("access", access);
-                    dispatch("getMemberInfo")
-                })
-                .catch(() => {
-                    alert("이메일과 비밀번호를 확힌하세요.")
-                })
-            //즉, 토큰을 로컬 스토리지에 저장하고 새로고침 해서 vue application이 실행되었을 때
-            //로컬 스토리지에 토큰이 있다면 토큰을 가지고 유저 정보를 요청하자.
-        },
-        logout({ commit }) {
-            commit("logout")
-            router.push({path: "/login"})
-        },
-        getMemberInfo( {commit} ) {
-            //로컬 스토리지에 저장된 토큰을 불러온다.
-            let local_access = localStorage.getItem("access")
-            let config = {
-                headers: {
-                    "access": local_access
-                }
-            }
-            //반환된 토큰 -> 유저 정보 반환 (이름, id 등)
-            //새로고침 -> 토큰만 가지고 유저 정보를 요청
-            axios.get("/api/account/memberInfo", config)
-                .then(res => {
-                    let memberInfo = {
-                        id: res.data.id,
-                    }
-                    commit("loginSuccess", memberInfo)
-                })
-                .catch(() => {
-                    alert("이메일과 비밀번호를 확인해주세요.")
-                })
-        }
-    }*/
+
 })
 /*
 
