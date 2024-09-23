@@ -6,6 +6,9 @@ import Order from "@/pages/Order.vue";
 import Orders from "@/pages/Orders.vue";
 import History from "@/pages/History.vue";
 import Signup from "@/pages/Signup.vue";
+import Admin from "@/pages/Admin.vue";
+import AdminOutfit from "@/pages/AdminOutfit.vue";
+import AdminMember from "@/pages/AdminMember.vue";
 
 const routes = [
     {path: "/", component: Home},
@@ -15,6 +18,10 @@ const routes = [
     {path: "/orders", component: Orders},
     {path: "/history", component: History},
     {path: "/signup", component: Signup},
+    {path: "/admin", component: Admin},
+    {path: "/adminOutfit", component: AdminOutfit},
+    {path: "/adminMember", component: AdminMember},
+
 ]
 
 const router = createRouter({
