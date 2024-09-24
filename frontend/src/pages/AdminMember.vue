@@ -25,7 +25,11 @@
         </thead>
         <tbody>
         <tr v-for="member in state.members" :key="member.id">
-          <td>{{ member.email }}</td>
+          <td>
+            <router-link :to="{ name: `AdminMemberInfo`, params: { email: member.email }}">
+              {{ member.email }}
+            </router-link>
+          </td>
           <td>{{ member.delStatus }}</td>
         </tr>
         </tbody>
@@ -107,6 +111,6 @@ table {
 
 .styled-table th, .styled-table td {
   padding: 10px 5px;
-  border-right: 1px solid #D5D5D5;
+  border: 1px solid #D5D5D5;
 }
 </style>
