@@ -9,6 +9,7 @@ import Signup from "@/pages/Signup.vue";
 import Admin from "@/pages/Admin.vue";
 import AdminOutfit from "@/pages/AdminOutfit.vue";
 import AdminMember from "@/pages/AdminMember.vue";
+import AdminMemberInfo from "@/pages/AdminMemberInfo.vue";
 
 const routes = [
     {path: "/", component: Home},
@@ -21,6 +22,7 @@ const routes = [
     {path: "/admin", component: Admin},
     {path: "/adminOutfit", component: AdminOutfit},
     {path: "/adminMember", component: AdminMember},
+    {path: "/adminMemberInfo/:email", name: "AdminMemberInfo", component: AdminMemberInfo},
 
 ]
 
