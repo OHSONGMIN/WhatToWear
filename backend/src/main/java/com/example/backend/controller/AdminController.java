@@ -20,9 +20,19 @@ public class AdminController {
             @RequestParam("email") String email
             ) {
 
-        List<Member> members = adminRepository.findByEmail(email);
+        List<Member> members = adminRepository.findByKeyword(email);
 
         return new ResponseEntity<>(members, HttpStatus.OK);
+    }
+
+    @GetMapping("/api/admin/memberInfo")
+    public ResponseEntity getMemberInfo(
+            @RequestParam("email") String email
+    ) {
+
+        Member member = adminRepository.findByEmail(email);
+
+        return new ResponseEntity<>(member, HttpStatus.OK);
     }
 
 }
