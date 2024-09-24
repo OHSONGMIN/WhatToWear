@@ -1,5 +1,4 @@
 <template>
-
   <div class="admin-container">
     <h2>회원 관리</h2>
     <div>
@@ -97,7 +96,17 @@ p {
 table {
   border-collapse: collapse;
   margin: 25px 0;
-  min-width: 250px;
-  border: 1px solid #dddddd
+  border: 1px solid #D5D5D5;
+  min-width: 300px;
+}
+
+.styled-table thead tr {
+  background-color: #D5D5D5;
+  font-size: 15px;
+}
+
+.styled-table th, .styled-table td {
+  padding: 10px 5px;
+  border-right: 1px solid #D5D5D5;
 }
 </style>
