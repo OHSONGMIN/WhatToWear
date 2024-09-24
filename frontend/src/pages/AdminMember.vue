@@ -8,44 +8,62 @@
                placeholder="이메일을 입력하세요"
                v-model="state.email"
         />
-        <button @click="search()">검색</button>
+        <button @click.prevent="search()">검색</button>
       </form>
     </div>
 
-    <div v-if="state.members">
-      <h6>"{{ state.email }}"로 검색한 결과입니다</h6>
+    <!-- 검색어가 있으면 -->
+    <div v-if="state.searchKeyword" class="searchResult">
+      <h6>"{{ state.searchKeyword }}"로 검색한 결과입니다</h6>
 
-      <table>
+      <!-- 검색 결과가 1개 이상 -->
+      <table v-if="state.members.length > 0" class="styled-table">
+        <thead>
+        <tr>
+          <th>이메일</th>
+          <th>탈퇴여부</th>
+        </tr>
+        </thead>
+        <tbody>
         <tr v-for="member in state.members" :key="member.id">
           <td>{{ member.email }}</td>
+          <td>{{ member.delStatus }}</td>
         </tr>
+        </tbody>
       </table>
-    </div>
 
+      <!-- 검색 결과가 0개 -->
+      <p v-else>검색 결과가 존재하지 않습니다.</p>
+    </div>
   </div>
 </template>
 
 <script>
-import {reactive} from "vue";
+import { reactive } from "vue";
 import axios from "axios";
 
 export default {
   name: "AdminMember",
   setup() {
     const state = reactive({
-      keyword: "",
+      email: "",
       members: [],
+      searchKeyword: ""
     })
 
     const search = () => {
-      axios.post("/api/admin/searchMember", state.form)
+      axios.get("/api/admin/searchMember", {
+        params: { email: state.email }
+      })
           .then((res) => {
-            console.log(res);
-
             state.members = res.data;
+            state.searchKeyword = state.email;
           })
+          .catch((error) => {
+            console.error(error);
+          });
     }
-    return {state, search};
+    return { state, search };
   }
 }
 </script>
@@ -67,4 +85,19 @@ button {
   cursor: pointer;
 }
 
+p {
+  font-size: 20px;
+  margin: 20px;
+}
+
+.searchResult {
+  text-align: center;
+}
+
+table {
+  border-collapse: collapse;
+  margin: 25px 0;
+  min-width: 250px;
+  border: 1px solid #dddddd
+}
 </style>
