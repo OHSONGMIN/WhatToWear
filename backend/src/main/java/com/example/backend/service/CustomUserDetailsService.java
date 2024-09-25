@@ -28,10 +28,13 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         if (member != null) {
 
-            //member에 담아서 return하면 AutneticationManager가 검증 함
+            //member에 담아서 return하면 AutneticationManager가 검증
             return new CustomUserDetails(member);
         }
 
+        if (member.getDelStatus() == 1) {
+            throw new RuntimeException("탈퇴한 회원입니다.");
+        }
         return null;
     }
 }
