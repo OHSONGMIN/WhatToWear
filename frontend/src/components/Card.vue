@@ -4,16 +4,15 @@
       <div class="d-flex align-items-center">
         <span class="text-muted">{{ formatDate(outfit.regdate) }}</span> &nbsp; &nbsp;
         <span class="text-muted">{{ outfit.region }}</span>
-        {{ memberId }}는 멤버아이디
-        {{ outfit.memberId }}는 아웃핏 멤버아이디
-
       </div>
 
       <div class="d-flex justify-content-end align-items-center">
 <!--        <span v-if="$store.state.memberId === outfit.memberId || $store.state.memberId === 1" class="cursor-pointer ms-3 text-muted"-->
 <!--              @click="deleteOutfit(outfit.id)">삭제</span>-->
-        <span v-if="memberId === outfit.memberId || memberId === 1" class="cursor-pointer ms-3 text-muted"
-              @click="deleteOutfit(outfit.id)">{{ memberId }} 삭제</span>
+        <span v-if="memberId === outfit.memberId || memberId === 1 && outfit.delStatus === 0" class="cursor-pointer ms-3 text-muted"
+              @click="deleteOutfit(outfit.id)">삭제</span>
+        <span v-if="outfit.delStatus === 1">삭제됨</span>
+
 
         &nbsp;
         <span class="review">
@@ -63,7 +62,7 @@ export default {
             emit('deleted'); //deleted 이벤트를 발생
           })
           .catch((error) => {
-            console.error("리뷰 삭제 실패:", error);
+            console.error("리뷰 삭제 실패: ", error);
           })
     }
 
