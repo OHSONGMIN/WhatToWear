@@ -36,9 +36,9 @@ public class CustomUserDetails implements UserDetails {
         return collection;
     }
 
-    public Member getMember() {
-        return member;
-    }
+//    public Member getMember() {
+//        return member;
+//    }
 
     @Override
     public String getPassword() {
@@ -46,7 +46,7 @@ public class CustomUserDetails implements UserDetails {
     }
 
     @Override
-    public String getUsername() {
+    public String getUsername() { //사실 email 가져옴
         return member.getEmail();
     }
 
@@ -67,6 +67,6 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return member.getDelStatus() == 0;
     }
 }
