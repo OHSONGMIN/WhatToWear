@@ -109,7 +109,7 @@ axios.interceptors.response.use(
             // 403 에러 Forbidden
             if (status === 403) {
                 console.error(`403 Error`, error);
-                alert('이 리소스에 접근할 권한이 없습니다.');
+                alert('이 리소스에 접근할 권한이 없습니다. 123123123');
 
                 router.push({path: "/"});
             }
@@ -124,6 +124,11 @@ axios.interceptors.response.use(
             if (status === 500) {
                 console.error(`500 Error`, error);
                 //alert('서버에 문제가 발생했습니다. 잠시 후 다시 시도해주세요.');
+            }
+
+            if (status === 499) {
+                console.error(`499 Error`, error);
+                alert(`로그인 정보를 찾을 수 없습니다.`);
             }
         }
         else {
