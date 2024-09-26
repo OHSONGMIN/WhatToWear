@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -101,10 +102,10 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String role = auth.getAuthority();
 
         //토큰 생성
-        String access = jwtUtil.createJwt("access", username, role, 600000L);
+        String access = jwtUtil.createJwt("access", username, role, 60000L);
         String refresh = jwtUtil.createJwt("refresh", username, role, 86400000L);
 
-        //Refresh 토큰 저장
+        //Refresh 토큰 DB에 저장
         addRefreshEntity(username, refresh, 86400000L);
 
         //응답 설정
@@ -155,11 +156,21 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     }
 
     @Override
-    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) {
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
 
         System.out.println("fail~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
-        response.setStatus(401);
+        if (failed.getMessage().equals("Member is deactivated")) {
+            response.setStatus(499); // 커스텀 상태 코드
+        }
+
+        else if (failed instanceof UsernameNotFoundException) {
+            response.setStatus(499);
+        }
+
+        else {
+            response.setStatus(499);
+        }
     }
 
     private Cookie createCookie(String key, String value) {
