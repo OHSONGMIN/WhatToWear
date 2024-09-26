@@ -23,18 +23,20 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
 
-        //DB에서 조회
+        // DB에서 조회
         Member member = memberRepository.findByEmail(email);
 
-        if (member != null) {
-
-            //member에 담아서 return하면 AutneticationManager가 검증
-            return new CustomUserDetails(member);
+        if (member == null) {
+            // 미가입
+            throw new UsernameNotFoundException("Member not fount");
         }
 
         if (member.getDelStatus() == 1) {
-            throw new RuntimeException("탈퇴한 회원입니다.");
+            // 탈퇴회원
+            throw new IllegalStateException("Member is deactivated");
         }
-        return null;
+
+        // member에 담아서 return하면 AutneticationManager가 검증
+        return new CustomUserDetails(member);
     }
 }
