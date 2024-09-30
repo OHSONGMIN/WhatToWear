@@ -30,13 +30,13 @@
               {{ member.email }}
             </router-link>
           </td>
-          <td>{{ member.delStatus }}</td>
+          <td>{{ member.delStatus === 0 ? member.delStatus : "탈퇴"}}</td>
         </tr>
         </tbody>
       </table>
 
       <!-- 검색 결과가 0개 -->
-      <p v-else>검색 결과가 존재하지 않습니다.</p>
+      <div v-else>검색 결과가 존재하지 않습니다.</div>
     </div>
   </div>
 </template>
