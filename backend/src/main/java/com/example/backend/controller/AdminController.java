@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -62,6 +63,22 @@ public class AdminController {
         int memberId = memberRepository.findByEmail(email).getId();
 
         List<Outfit> outfits = outfitRepository.findAllOutfitsByMemberId(memberId);
+
+        return new ResponseEntity<>(outfits, HttpStatus.OK);
+    }
+
+    @GetMapping("/api/admin/searchOutfit")
+    public ResponseEntity getMemberOutfit(
+            @RequestParam("startDate") String startDate,
+            @RequestParam("endDate") String endDate
+
+    ) {
+        System.out.println(startDate + "부터요 언제까지?" + endDate);
+
+        LocalDateTime localStartDate = LocalDateTime.of(Integer.parseInt(startDate.substring(0, 4)), Integer.parseInt(startDate.substring(5, 7)), Integer.parseInt(startDate.substring(8, 10)), 0, 0);
+        LocalDateTime localEndDate = LocalDateTime.of(Integer.parseInt(endDate.substring(0, 4)), Integer.parseInt(endDate.substring(5, 7)), Integer.parseInt(endDate.substring(8, 10)), 23, 59, 59);
+
+        List<Outfit> outfits = outfitRepository.findOutfitsRange(localStartDate, localEndDate);
 
         return new ResponseEntity<>(outfits, HttpStatus.OK);
     }
