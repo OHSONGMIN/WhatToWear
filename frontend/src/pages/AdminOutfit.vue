@@ -3,76 +3,87 @@
     <h2>리뷰 관리</h2><br>
     <h6>조회 기간을 선택하세요.</h6>
     <div>
-
-      <VueDatePicker locale="ko" v-model="date" />
-    </div>
-    <div>
-      <form>
-        <input type="search"
-               placeholder="이메일을 입력하세요"
-               v-model="state.email"
-        />
-        <button @click.prevent="search()">검색</button>
-      </form>
+      <VueDatePicker
+          v-model="dateRange"
+          :range="true"
+          :locale="ko()"
+          :enable-time-picker="false"
+          @update:model-value="handleDate"
+          class="datepicker"
+      />
     </div>
 
-    <!-- 검색어가 있으면 -->
-    <div v-if="state.searchKeyword" class="searchResult">
-      <h6>"{{ state.searchKeyword }}"로 검색한 결과입니다</h6>
+    <p>{{ formattedDateRange }} 동안 작성된 리뷰입니다.</p>
 
-      <!-- 검색 결과가 1개 이상 -->
-      <table v-if="state.members.length > 0" class="styled-table">
-        <thead>
-        <tr>
-          <th>이메일</th>
-          <th>탈퇴여부</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr v-for="member in state.members" :key="member.id">
-          <td>{{ member.email }}</td>
-          <td>{{ member.delStatus }}</td>
-        </tr>
-        </tbody>
-      </table>
+    <button @click.prevent="search()">검색</button>
 
-      <!-- 검색 결과가 0개 -->
-      <p v-else>검색 결과가 존재하지 않습니다.</p>
-    </div>
   </div>
 </template>
 
 <script>
-import { reactive } from "vue";
+import {reactive, ref} from "vue";
 import axios from "axios";
 import VueDatePicker from '@vuepic/vue-datepicker';
 import '@vuepic/vue-datepicker/dist/main.css';
+import {ko} from "date-fns/locale";
 
 export default {
   name: "AdminOutfit",
+  methods: {
+    ko() {
+      return ko
+    }
+  },
   components: {
     VueDatePicker
   },
   setup() {
-    const state = reactive({
-      email: "",
-      members: [],
-      searchKeyword: ""
-    })
+    const state = reactive({})
+    const dateRange = ref(null);
+    const formattedDateRange = ref("");
+
+    const handleDate = (modelDate) => {
+      dateRange.value = modelDate;
+      formattedDateRange.value = dateRangeFormat(modelDate);
+    }
 
     const search = () => {
-      axios.get("/api/admin/searchMember", {
-        params: { email: state.email }
-      })
-          .then((res) => {
-            state.members = res.data;
-            state.searchKeyword = state.email;
-          })
-          .catch((error) => {
-            console.error(error);
-          });
+      if (dateRange.value) {
+        axios.get("/api/admin/searchOutfit", {
+          params: {
+            startDate: dateRange.value[0],
+            endDate: dateRange.value[1]
+          }
+        })
+            .then((res) => {
+              console.log(res);
+            })
+            .catch((error) => {
+              console.error(error);
+            });
+      } else {
+        console.error("날짜를 선택하세요.")
+      }
     }
-    return { state, search };
+
+    const dateRangeFormat = (value) => {
+      const startDate = value[0];
+      const endDate = value[1];
+
+      if (startDate && endDate) {
+        const format = (date) => {
+          const year = date.getFullYear();
+          const month = (date.getMonth() + 1).toString().padStart(2, "0");
+          const day = date.getDate().toString().padStart(2, "0");
+          return `${year}-${month}-${day}`;
+        };
+
+        return `${format(startDate)}~${format(endDate)}`;
+      }
+
+      return "";
+    };
+    return {state, search, dateRange, handleDate, dateRangeFormat, formattedDateRange};
   }
 }
 </script>
@@ -85,10 +96,6 @@ export default {
   margin-top: 50px;
 }
 
-form {
-  display: block;
-  margin: 20px;
-}
 
 button {
   cursor: pointer;
@@ -99,24 +106,4 @@ p {
   margin: 20px;
 }
 
-.searchResult {
-  text-align: center;
-}
-
-table {
-  border-collapse: collapse;
-  margin: 25px 0;
-  border: 1px solid #D5D5D5;
-  min-width: 300px;
-}
-
-.styled-table thead tr {
-  background-color: #D5D5D5;
-  font-size: 15px;
-}
-
-.styled-table th, .styled-table td {
-  padding: 10px 5px;
-  border-right: 1px solid #D5D5D5;
-}
 </style>
