@@ -12,7 +12,8 @@
           class="datepicker"
       />
       <div class="btn-class">
-        <button @click.prevent="search()">검색</button>
+        <button @click.prevent="search()">검색</button>&nbsp;
+        <button @click.prevent="searchAll()">전체 검색</button>
       </div>
     </div>
 
@@ -90,6 +91,17 @@ export default {
       }
     }
 
+    const searchAll = () => {
+      axios.get("/api/admin/outfits")
+          .then((res) => {
+            state.outfits = res.data;
+            state.searchRange = "전체 기간"
+          })
+          .catch((error) => {
+            console.error(error);
+          })
+    }
+
     const dateRangeFormat = (value) => {
       const startDate = value[0];
       const endDate = value[1];
@@ -107,7 +119,7 @@ export default {
 
       return "";
     };
-    return {state, search, dateRange, handleDate, dateRangeFormat, formattedDateRange};
+    return {state, search, dateRange, handleDate, dateRangeFormat, formattedDateRange, searchAll};
   }
 }
 </script>
@@ -123,7 +135,6 @@ export default {
 
 button {
   cursor: pointer;
-  margin: 10px;
 }
 
 p {
@@ -133,6 +144,7 @@ p {
 
 .btn-class {
   text-align: center;
+  margin: 10px;
 }
 
 .searchResult {
