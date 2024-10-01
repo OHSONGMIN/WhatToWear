@@ -23,4 +23,7 @@ public interface OutfitRepository extends JpaRepository<Outfit, Integer> {
 
     @Query("SELECT o FROM Outfit o WHERE o.regdate BETWEEN :startDate AND :endDate ORDER BY o.id DESC")
     List<Outfit> findOutfitsRange(LocalDateTime startDate, LocalDateTime endDate);
+
+    @Query("SELECT o FROM Outfit o ORDER BY o.id DESC")
+    List<Outfit> findAllOutfits();
 }
