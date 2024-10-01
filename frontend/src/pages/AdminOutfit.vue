@@ -18,7 +18,7 @@
 
     <div v-if="state.searchRange">
       <div class="searchResult">
-        <p>{{ state.searchRange }} <br> 동안 작성된 리뷰입니다.</p>
+        <h6>{{ state.searchRange }} <br> 동안 작성된 리뷰입니다.</h6>
       </div>
 
       <div v-if="state.outfits.length > 0">
@@ -27,8 +27,7 @@
         </div>
       </div>
       <div v-else class="noResults">
-        <br>
-        <h6>검색 결과가 없습니다.</h6>
+        <p>검색 결과가 없습니다.</p>
       </div>
 
     </div>
@@ -64,11 +63,17 @@ export default {
     }
 
     const search = () => {
-      if (dateRange.value) {
+      const inputStartDate = dateRange.value ? dateRange.value[0] : null;
+      const inputEndDate = dateRange.value ? dateRange.value[1] : null;
+
+      if (inputStartDate && inputEndDate) {
+
+        console.log(dateRange.value);
+
         axios.get("/api/admin/searchOutfit", {
           params: {
-            startDate: dateRange.value[0],
-            endDate: dateRange.value[1]
+            startDate: inputStartDate,
+            endDate: inputEndDate
           }
         })
             .then((res) => {
@@ -79,7 +84,9 @@ export default {
               console.error(error);
             });
       } else {
-        console.error("날짜를 선택하세요.")
+        console.log(dateRange.value);
+
+        window.alert("날짜를 선택하세요.");
       }
     }
 
@@ -116,6 +123,7 @@ export default {
 
 button {
   cursor: pointer;
+  margin: 10px;
 }
 
 p {
