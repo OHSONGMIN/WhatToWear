@@ -73,12 +73,22 @@ public class AdminController {
             @RequestParam("endDate") String endDate
 
     ) {
-        System.out.println(startDate + "부터요 언제까지?" + endDate);
+        //System.out.println(startDate + "부터요 언제까지?" + endDate);
 
         LocalDateTime localStartDate = LocalDateTime.of(Integer.parseInt(startDate.substring(0, 4)), Integer.parseInt(startDate.substring(5, 7)), Integer.parseInt(startDate.substring(8, 10)), 0, 0);
         LocalDateTime localEndDate = LocalDateTime.of(Integer.parseInt(endDate.substring(0, 4)), Integer.parseInt(endDate.substring(5, 7)), Integer.parseInt(endDate.substring(8, 10)), 23, 59, 59);
 
+        //System.out.println(localStartDate + " " + localEndDate);
+
         List<Outfit> outfits = outfitRepository.findOutfitsRange(localStartDate, localEndDate);
+
+        return new ResponseEntity<>(outfits, HttpStatus.OK);
+    }
+
+    @GetMapping("/api/admin/outfits")
+    public ResponseEntity getAllOutfits () {
+
+        List<Outfit> outfits = outfitRepository.findAllOutfits();
 
         return new ResponseEntity<>(outfits, HttpStatus.OK);
     }
