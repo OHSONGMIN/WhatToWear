@@ -8,7 +8,7 @@
     <Card :outfit="outfit"/>
     <!-- Card 컴포넌트에서 발생한 deleted 이벤트를 수신 -->
   </div>
-  <infinite-loading @infinite="infiniteHandler" spinner="spinner"></infinite-loading>
+  <InfiniteLoading @infinite="infiniteHandler" spinner="spinner"></InfiniteLoading>
 
   <div>
     <Write v-if="modalStatus" @sendClose="closeModal" @sendLoad="load" :address="state.address"></Write>
@@ -176,11 +176,13 @@ export default {
   },
 
   mounted() {
-    // 컴포넌트가 처음 로드될 때 infiniteHandler 호출
-    this.infiniteHandler({
-      loaded: () => {},  // 가짜 loaded 함수 전달
-      complete: () => {},  // 가짜 complete 함수 전달
-    });
+    //컴포넌트가 처음 로드될 때 infiniteHandler 호출
+    // this.infiniteHandler({
+    //   // loaded: () => {},
+    //   // complete: () => {}
+    //   loaded: this.$refs.infiniteLoading.loaded,
+    //   complete: this.$refs.infiniteLoading.complete,
+    // });
   }
 }
 </script>
