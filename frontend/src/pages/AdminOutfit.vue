@@ -16,24 +16,21 @@
         <button @click.prevent="searchAll()">전체 검색</button>
       </div>
     </div>
-
-    <div v-if="state.searchRange">
-      <div class="searchResult">
-        <h6>{{ state.searchRange }} <br> 동안 작성된 리뷰입니다.</h6>
-      </div>
-
-      <div v-if="state.outfits.length > 0">
-        <div class="col" v-for="outfit in state.outfits" :key="outfit.id">
-          <Card :outfit="outfit" @deleted="search()"/>
-        </div>
-      </div>
-      <div v-else class="noResults">
-        <p>검색 결과가 없습니다.</p>
-      </div>
-
+  </div>
+  
+  <div v-if="state.searchRange">
+    <div class="searchResult">
+      <h6>{{ state.searchRange }} <br> 동안 작성된 리뷰입니다.</h6>
     </div>
+  </div>
 
-
+  <div v-if="state.outfits.length > 0">
+    <div class="col" v-for="outfit in state.outfits" :key="outfit.id">
+      <Card :outfit="outfit" @deleted="search()"/>
+    </div>
+  </div>
+  <div v-else class="noResults">
+    <p>검색 결과가 없습니다.</p>
   </div>
 </template>
 
