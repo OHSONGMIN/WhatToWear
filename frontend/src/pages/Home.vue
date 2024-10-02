@@ -4,10 +4,11 @@
     <!--  현재 위치 : {{ state.address.city }} {{ state.address.borough }}-->
   </div>
 
-  <div class="col" v-for="outfit in state.outfits" :key="outfit.id">
-    <Card :outfit="outfit" @deleted="load"/>
+  <div class="col" v-for="outfit in outfits" :key="outfit.id">
+    <Card :outfit="outfit"/>
     <!-- Card 컴포넌트에서 발생한 deleted 이벤트를 수신 -->
   </div>
+  <infinite-loading @infinite="infiniteHandler" spinner="spinner"></infinite-loading>
 
   <div>
     <Write v-if="modalStatus" @sendClose="closeModal" @sendLoad="load" :address="state.address"></Write>
@@ -30,28 +31,61 @@ import Card from "@/components/Card.vue";
 import Write from "@/components/Write.vue";
 import Weather from "@/components/Weather.vue";
 import {mapGetters} from "vuex";
+import InfiniteLoading from "vue3-infinite-loading";
 
 export default {
   name: "Home",
   computed: {
     ...mapGetters([`isLoggedIn`]),
   },
-  components: {Card, Write, Weather},
+  components: {Card, Write, Weather, InfiniteLoading},
 
+  data() {
+    return {
+      page: 1,
+      outfits: [],
+    }
+  },
+  methods: {
+    infiniteHandler($state) {
+      console.log("무한 스크롤 시작");
+
+      axios.get("/api/main/outfits", {
+        params: {
+          page: this.page,
+          perPage: 5 //나중에 올리자
+        },
+      })
+          .then((res) => {
+        const data = res.data;
+
+        console.log("불러올수" + data);
+
+        if (data.length) {
+          this.page++;
+          this.outfits.push(...data);
+          $state.loaded();
+        }
+        else {
+          $state.complete();
+        }
+      });
+    },
+  },
   setup() {
     const state = reactive({
-      outfits: [],
+      //outfits: [],
       address: null,
       weatherData: null,
     })
 
-    const load = () => {
-      axios.get("/api/main/outfits").then((res) => {
-        state.outfits = res.data;
-      })
-    }
-
-    load();
+    // const load = () => {
+    //   axios.get("/api/main/outfits").then((res) => {
+    //     state.outfits = res.data;
+    //   })
+    // }
+    //
+    // load();
 
     const getWeather = () => {
       navigator.geolocation.getCurrentPosition(position => {
@@ -88,10 +122,6 @@ export default {
             weatherItems.forEach(item => {
 
               const category = item.category;
-              // const fcstTime = item.fcstTime;
-              // const fcstDate = item.fcstDate;
-              // const baseTime = item.baseTime;
-              // const baseDate = item.baseTime;
 
               if (category === "TMP") {
                 weather.currentTemp = item.fcstValue;
@@ -130,6 +160,8 @@ export default {
 
     getWeather();
 
+
+
     const modalStatus = ref(false); //반응형
 
     const openModal = () => {
@@ -140,7 +172,15 @@ export default {
       modalStatus.value = false;
     }
 
-    return {state, load, modalStatus, openModal, closeModal, getWeather}
+    return {state, modalStatus, openModal, closeModal, getWeather}
+  },
+
+  mounted() {
+    // 컴포넌트가 처음 로드될 때 infiniteHandler 호출
+    this.infiniteHandler({
+      loaded: () => {},  // 가짜 loaded 함수 전달
+      complete: () => {},  // 가짜 complete 함수 전달
+    });
   }
 }
 </script>
