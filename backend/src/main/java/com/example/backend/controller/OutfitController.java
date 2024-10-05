@@ -12,6 +12,10 @@ import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -28,7 +32,6 @@ public class OutfitController {
 
     @Autowired
     JwtService jwtService;
-
     @Autowired
     private OutfitRepository outfitRepository;
     @Autowired
@@ -59,12 +62,23 @@ public class OutfitController {
 
 
     @GetMapping("/api/main/outfits")
-    public ResponseEntity getOutfits() {
+    public ResponseEntity getOutfitsPaging(
+            @RequestParam("page") int page,
+            @RequestParam("perPage") int perPage
+    ) {
+        //객체 생성
+        Pageable pageable = PageRequest.of(page - 1, perPage, Sort.by("id").descending());
 
-        List<Outfit> outfits = outfitRepository.findOutfits();
+        Page<Outfit> outfits = outfitRepository.findOutfits(pageable);
 
-        return new ResponseEntity<>(outfits, HttpStatus.OK);
+        return new ResponseEntity<>(outfits.getContent(), HttpStatus.OK);
     }
+//    public ResponseEntity getOutfits() {
+//
+//        List<Outfit> outfits = outfitRepository.findOutfits();
+//
+//        return new ResponseEntity<>(outfits, HttpStatus.OK);
+//    }
 
     @Transactional
     @PatchMapping("/api/delOutfit/{outfitId}")
