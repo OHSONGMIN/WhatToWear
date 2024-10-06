@@ -1,27 +1,35 @@
 <template>
-  <div>
-    <Weather :weatherData="state.weatherData" :address="state.address"/>
-    <!--  현재 위치 : {{ state.address.city }} {{ state.address.borough }}-->
+  <div class="scroll-container">
+    <div>
+      <Weather :weatherData="state.weatherData" :address="state.address"/>
+      <!--  현재 위치 : {{ state.address.city }} {{ state.address.borough }}-->
+    </div>
+
+    <div class="col" v-for="outfit in outfits" :key="outfit.id">
+      <Card :outfit="outfit"/>
+      <!-- Card 컴포넌트에서 발생한 deleted 이벤트를 수신 -->
+    </div>
+    <infinite-loading @infinite="loadMoreData" ref="infiniteLoading"></infinite-loading>
+<!--    <InfiniteLoading-->
+<!--        ref="infiniteLoading"-->
+<!--        @infinite="infiniteHandler"-->
+<!--        spinner="spinner"-->
+<!--        target=".scroll-container"></InfiniteLoading>-->
+    <div>
+      <Write v-if="modalStatus" @sendClose="closeModal" @sendLoad="load" :address="state.address"></Write>
+    </div>
+
+    <div v-if="isLoggedIn">
+      <button type="button" class="fixed-button" @click="openModal"><i class="bi bi-pencil"></i></button>
+    </div>
+    <div v-else>
+      <router-link class="fixed-button" to="/login">
+        <i class="bi bi-pencil"></i>
+      </router-link>
+    </div>
+    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
   </div>
 
-  <div class="col" v-for="outfit in outfits" :key="outfit.id">
-    <Card :outfit="outfit"/>
-    <!-- Card 컴포넌트에서 발생한 deleted 이벤트를 수신 -->
-  </div>
-  <InfiniteLoading @infinite="infiniteHandler" spinner="spinner"></InfiniteLoading>
-
-  <div>
-    <Write v-if="modalStatus" @sendClose="closeModal" @sendLoad="load" :address="state.address"></Write>
-  </div>
-
-  <div v-if="isLoggedIn">
-    <button type="button" class="fixed-button" @click="openModal"><i class="bi bi-pencil"></i></button>
-  </div>
-  <div v-else>
-    <router-link class="fixed-button" to="/login">
-      <i class="bi bi-pencil"></i>
-    </router-link>
-  </div>
 </template>
 
 <script>
@@ -31,7 +39,7 @@ import Card from "@/components/Card.vue";
 import Write from "@/components/Write.vue";
 import Weather from "@/components/Weather.vue";
 import {mapGetters} from "vuex";
-import InfiniteLoading from "vue3-infinite-loading";
+import {InfiniteLoading} from "vue3-infinite-loading"
 
 export default {
   name: "Home",
@@ -40,38 +48,40 @@ export default {
   },
   components: {Card, Write, Weather, InfiniteLoading},
 
-  data() {
-    return {
-      page: 1,
-      outfits: [],
-    }
-  },
-  methods: {
-    infiniteHandler($state) {
-      console.log("무한 스크롤 시작");
-
-      axios.get("/api/main/outfits", {
-        params: {
-          page: this.page,
-          perPage: 5 //나중에 올리자
-        },
-      })
-          .then((res) => {
-        const data = res.data;
-
-        console.log("불러올수" + data);
-
-        if (data.length) {
-          this.page++;
-          this.outfits.push(...data);
-          $state.loaded();
-        }
-        else {
-          $state.complete();
-        }
-      });
-    },
-  },
+  // data() {
+  //   return {
+  //     page: 1,
+  //     outfits: [],
+  //   }
+  // },
+  // methods: {
+  //   infiniteHandler($state) {
+  //     console.log("무한 스크롤 시작");
+  //
+  //     axios.get("/api/main/outfits", {
+  //       params: {
+  //         page: this.page,
+  //         perPage: 5 //나중에 올리자
+  //       },
+  //     })
+  //         .then((res) => {
+  //           setTimeout(() => {
+  //             const data = res.data;
+  //
+  //             console.log("불러올수" + data);
+  //
+  //             if (data.length) {
+  //               this.page++;
+  //               this.outfits.push(...data);
+  //               $state.loaded();
+  //             } else {
+  //               console.log("더 이상 데이터가 없음");
+  //               $state.complete();
+  //             }
+  //           }, 1000)
+  //         });
+  //   },
+  // },
   setup() {
     const state = reactive({
       //outfits: [],
@@ -79,14 +89,35 @@ export default {
       weatherData: null,
     })
 
-    // const load = () => {
-    //   axios.get("/api/main/outfits").then((res) => {
-    //     state.outfits = res.data;
-    //   })
-    // }
-    //
-    // load();
+    const outfits = ref([]);
+    const page = ref(1);
 
+    const loadMoreData = async ($state) => {
+
+      console.log("무한 스크롤 시작");
+
+      try {
+        const response = await axios.get(`/api/main/outfits`, {
+          params: {
+            page: page.value,
+            perPage: 5
+          }
+        })
+
+        const newItems = response.data;
+
+        if (newItems.length > 0) {
+          outfits.value = [...outfits.value, ...newItems];
+          page.value++;
+          $state.loaded();
+        } else {
+          $state.complete();
+        }
+      } catch (error) {
+        console.error("API 요청 실패:", error);
+        $state.error();
+      }
+    }
     const getWeather = () => {
       navigator.geolocation.getCurrentPosition(position => {
         const lat = position.coords.latitude; //위도
@@ -161,7 +192,6 @@ export default {
     getWeather();
 
 
-
     const modalStatus = ref(false); //반응형
 
     const openModal = () => {
@@ -172,16 +202,28 @@ export default {
       modalStatus.value = false;
     }
 
-    return {state, modalStatus, openModal, closeModal, getWeather}
+    return {state, modalStatus, openModal, closeModal, getWeather, loadMoreData}
   },
 
   mounted() {
+
+    const container = document.querySelector('.scroll-container');
+    console.log('scrollHeight:', container.scrollHeight);
+    console.log('clientHeight:', container.clientHeight);
+
+    if (container.scrollHeight > container.clientHeight) {
+      console.log('스크롤 가능');
+    } else {
+      console.log('스크롤 불가능');
+    }
     //컴포넌트가 처음 로드될 때 infiniteHandler 호출
     // this.infiniteHandler({
-    //   // loaded: () => {},
-    //   // complete: () => {}
-    //   loaded: this.$refs.infiniteLoading.loaded,
-    //   complete: this.$refs.infiniteLoading.complete,
+    //   loaded: () => {
+    //   },
+    //   complete: () => {
+    //   },
+    //   //loaded: this.$refs.infiniteLoading.loaded,
+    //   //complete: this.$refs.infiniteLoading.complete,
     // });
   }
 }
@@ -209,6 +251,11 @@ export default {
 
 .fixed-button:hover {
   background-color: #B0AB99;
+}
+
+.scroll-container {
+  height: 100vh; /* 필요한 경우 */
+  overflow-y: auto;
 }
 
 </style>
