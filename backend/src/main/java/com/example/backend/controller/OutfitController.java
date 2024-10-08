@@ -63,10 +63,13 @@ public class OutfitController {
 
     @GetMapping("/api/main/outfits")
     public ResponseEntity getOutfitsPaging(
-            @RequestParam("page") int page,
-            @RequestParam("perPage") int perPage
+            @RequestParam("page") int page
     ) {
         //객체 생성
+        System.out.println("도착핸나요?");
+
+        int perPage = 10;
+
         Pageable pageable = PageRequest.of(page - 1, perPage, Sort.by("id").descending());
 
         Page<Outfit> outfits = outfitRepository.findOutfits(pageable);
