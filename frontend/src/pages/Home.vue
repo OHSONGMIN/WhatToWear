@@ -8,7 +8,7 @@
     <div class="col" v-for="outfit in outfits" :key="outfit.id">
       <!--    <div v-for="outfit in outfits" :key="outfit.id">-->
       <!--      <div>{{ outfit }}</div>-->
-      <Card :outfit="outfit"/>
+      <Card :outfit="outfit" @deleted="removeOutfit(outfit.id)"/>
       <!-- Card 컴포넌트에서 발생한 deleted 이벤트를 수신 -->
     </div>
 
@@ -61,8 +61,6 @@ export default {
   },
   methods: {
     async getData() {
-      console.log("Fetching data for page:", this.currentPage);
-
       // 마지막 페이지이거나 로딩 중이면 중단
       if (this.isLastPage || this.isLoading) return;
 
@@ -76,9 +74,6 @@ export default {
 
         const response = await axios.get(`/api/main/outfits`, { params });
 
-        console.log("페이징 된 데이터 : " + response.data);
-
-        //const newData = response.data.result.content.map(item => ({ ...item, quantity: 1}));
         const newData = response.data;
 
         if (newData.length < this.pageSize) {
@@ -88,11 +83,13 @@ export default {
         }
 
         this.outfits = [...this.outfits, ...newData];
+      }
 
-        console.log(this.outfits);
-      } catch (error) {
+      catch (error) {
         console.error(`Error fetching orders:`, error);
-      } finally {
+      }
+
+      finally {
         this.isLoading = false; // 로딩 상태 해제~~~!!!
       }
     },
@@ -108,6 +105,10 @@ export default {
 
         console.log("~~~~~무한 스크롤 할거임~~~~~~~");
       }
+    },
+
+    removeOutfit(outfitId) {
+      this.outfits = this.outfits.filter(outfit => outfit.id !== outfitId);
     },
 
   },
