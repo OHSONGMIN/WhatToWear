@@ -6,17 +6,15 @@
     </div>
 
     <div class="col" v-for="outfit in outfits" :key="outfit.id">
+      <!--    <div v-for="outfit in outfits" :key="outfit.id">-->
+      <!--      <div>{{ outfit }}</div>-->
       <Card :outfit="outfit"/>
       <!-- Card 컴포넌트에서 발생한 deleted 이벤트를 수신 -->
     </div>
-    <infinite-loading @infinite="loadMoreData" ref="infiniteLoading"></infinite-loading>
-<!--    <InfiniteLoading-->
-<!--        ref="infiniteLoading"-->
-<!--        @infinite="infiniteHandler"-->
-<!--        spinner="spinner"-->
-<!--        target=".scroll-container"></InfiniteLoading>-->
+
+
     <div>
-      <Write v-if="modalStatus" @sendClose="closeModal" @sendLoad="load" :address="state.address"></Write>
+      <Write v-if="modalStatus" @sendClose="closeModal" @sendLoad="getData" :address="state.address"></Write>
     </div>
 
     <div v-if="isLoggedIn">
@@ -27,61 +25,93 @@
         <i class="bi bi-pencil"></i>
       </router-link>
     </div>
-    <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
   </div>
+
+  <br><br>
 
 </template>
 
 <script>
 import axios from "axios";
 import {reactive, ref} from "vue";
-import Card from "@/components/Card.vue";
 import Write from "@/components/Write.vue";
 import Weather from "@/components/Weather.vue";
 import {mapGetters} from "vuex";
-import {InfiniteLoading} from "vue3-infinite-loading"
+import Card from "@/components/Card.vue";
+
 
 export default {
   name: "Home",
   computed: {
     ...mapGetters([`isLoggedIn`]),
   },
-  components: {Card, Write, Weather, InfiniteLoading},
+  components: {Card, Write, Weather},
+  data() {
+    return {
+      outfits: [],
+      currentPage: 0,     //페이지 변수를 currentPage로 설정
+      pageSize: 5,        //페이지 크기를 pageSize로 설정
+      isLoading: false,
+      isLastPage: false   // 마지막 페이지 여부를 확인하는 변수
+    };
+  },
+  mounted() {
+    window.addEventListener(`scroll`, this.scrollPagination);
+    this.getData();
+  },
+  methods: {
+    async getData() {
+      console.log("Fetching data for page:", this.currentPage);
 
-  // data() {
-  //   return {
-  //     page: 1,
-  //     outfits: [],
-  //   }
-  // },
-  // methods: {
-  //   infiniteHandler($state) {
-  //     console.log("무한 스크롤 시작");
-  //
-  //     axios.get("/api/main/outfits", {
-  //       params: {
-  //         page: this.page,
-  //         perPage: 5 //나중에 올리자
-  //       },
-  //     })
-  //         .then((res) => {
-  //           setTimeout(() => {
-  //             const data = res.data;
-  //
-  //             console.log("불러올수" + data);
-  //
-  //             if (data.length) {
-  //               this.page++;
-  //               this.outfits.push(...data);
-  //               $state.loaded();
-  //             } else {
-  //               console.log("더 이상 데이터가 없음");
-  //               $state.complete();
-  //             }
-  //           }, 1000)
-  //         });
-  //   },
-  // },
+      // 마지막 페이지이거나 로딩 중이면 중단
+      if (this.isLastPage || this.isLoading) return;
+
+      this.isLoading = true;
+
+      try {
+        const params = {
+          page: this.currentPage,
+          size: this.pageSize
+        };
+
+        const response = await axios.get(`/api/main/outfits`, { params });
+
+        console.log("페이징 된 데이터 : " + response.data);
+
+        //const newData = response.data.result.content.map(item => ({ ...item, quantity: 1}));
+        const newData = response.data;
+
+        if (newData.length < this.pageSize) {
+          this.isLastPage = true;
+
+          console.log("마지막 페이지입니다...");
+        }
+
+        this.outfits = [...this.outfits, ...newData];
+
+        console.log(this.outfits);
+      } catch (error) {
+        console.error(`Error fetching orders:`, error);
+      } finally {
+        this.isLoading = false; // 로딩 상태 해제~~~!!!
+      }
+    },
+
+    scrollPagination() {
+      const nearBottom = window.innerHeight + window.scrollY >= document.body.offsetHeight - 30;
+      //console.log("스크롤 Y:", window.scrollY, " + 내부 길이:", window.innerHeight, ">= 오프셋 길이 전체 Content 길이:", document.body.offsetHeight);
+      //console.log("Near bottom:", nearBottom);
+
+      if (nearBottom && !this.isLastPage && !this.isLoading) {
+        this.currentPage++;
+        this.getData();
+
+        console.log("~~~~~무한 스크롤 할거임~~~~~~~");
+      }
+    },
+
+  },
+
   setup() {
     const state = reactive({
       //outfits: [],
@@ -89,35 +119,6 @@ export default {
       weatherData: null,
     })
 
-    const outfits = ref([]);
-    const page = ref(1);
-
-    const loadMoreData = async ($state) => {
-
-      console.log("무한 스크롤 시작");
-
-      try {
-        const response = await axios.get(`/api/main/outfits`, {
-          params: {
-            page: page.value,
-            perPage: 5
-          }
-        })
-
-        const newItems = response.data;
-
-        if (newItems.length > 0) {
-          outfits.value = [...outfits.value, ...newItems];
-          page.value++;
-          $state.loaded();
-        } else {
-          $state.complete();
-        }
-      } catch (error) {
-        console.error("API 요청 실패:", error);
-        $state.error();
-      }
-    }
     const getWeather = () => {
       navigator.geolocation.getCurrentPosition(position => {
         const lat = position.coords.latitude; //위도
@@ -202,30 +203,9 @@ export default {
       modalStatus.value = false;
     }
 
-    return {state, modalStatus, openModal, closeModal, getWeather, loadMoreData}
+    return {state, modalStatus, openModal, closeModal, getWeather}
   },
 
-  mounted() {
-
-    const container = document.querySelector('.scroll-container');
-    console.log('scrollHeight:', container.scrollHeight);
-    console.log('clientHeight:', container.clientHeight);
-
-    if (container.scrollHeight > container.clientHeight) {
-      console.log('스크롤 가능');
-    } else {
-      console.log('스크롤 불가능');
-    }
-    //컴포넌트가 처음 로드될 때 infiniteHandler 호출
-    // this.infiniteHandler({
-    //   loaded: () => {
-    //   },
-    //   complete: () => {
-    //   },
-    //   //loaded: this.$refs.infiniteLoading.loaded,
-    //   //complete: this.$refs.infiniteLoading.complete,
-    // });
-  }
 }
 </script>
 
@@ -251,11 +231,6 @@ export default {
 
 .fixed-button:hover {
   background-color: #B0AB99;
-}
-
-.scroll-container {
-  height: 100vh; /* 필요한 경우 */
-  overflow-y: auto;
 }
 
 </style>
