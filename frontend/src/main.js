@@ -12,7 +12,9 @@ if (saveMemberId) {
     store.commit(`setMemberId`, parseInt(saveMemberId));
 }
 
-createApp(App).use(store).use(router).mount('#app')
+const app = createApp(App);
+app.use(store).use(router);
+app.mount('#app');
 
 axios.interceptors.request.use(
     (config) => {
@@ -101,6 +103,8 @@ axios.interceptors.response.use(
                     console.error(`토큰 재발급 실패:`, reissueError);
 
                     sessionStorage.removeItem(`access`);
+                    store.dispatch(`logout`);
+
                     router.push({path: "/login"});
                     return Promise.reject(reissueError);
                 }
@@ -109,7 +113,7 @@ axios.interceptors.response.use(
             // 403 에러 Forbidden
             if (status === 403) {
                 console.error(`403 Error`, error);
-                alert('이 리소스에 접근할 권한이 없습니다. 123123123');
+                alert('이 리소스에 접근할 권한이 없습니다.');
 
                 router.push({path: "/"});
             }
@@ -130,8 +134,7 @@ axios.interceptors.response.use(
                 console.error(`499 Error`, error);
                 alert(`로그인 정보를 찾을 수 없습니다.`);
             }
-        }
-        else {
+        } else {
             // 네트워크 또는 다른 이유로 응답을 받지 못한 경우
             console.error(`응답을 받지 못했습니다:`, error);
             alert('서버와의 연결이 원활하지 않습니다. 네트워크 상태를 확인해주세요.');
@@ -139,7 +142,5 @@ axios.interceptors.response.use(
         return Promise.reject(error);
 
     }
-
-
 )
 
