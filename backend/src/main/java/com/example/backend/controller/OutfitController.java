@@ -2,15 +2,11 @@ package com.example.backend.controller;
 
 import com.example.backend.dto.CustomUserDetails;
 import com.example.backend.dto.OutfitDto;
-import com.example.backend.entity.Detail;
 import com.example.backend.entity.Outfit;
-import com.example.backend.repository.DetailRepository;
 import com.example.backend.repository.MemberRepository;
 import com.example.backend.repository.OutfitRepository;
 import com.example.backend.service.JwtService;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
-import org.apache.coyote.Response;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -63,14 +59,13 @@ public class OutfitController {
 
     @GetMapping("/api/main/outfits")
     public ResponseEntity getOutfitsPaging(
-            @RequestParam("page") int page
+            @RequestParam("page") int page,
+            @RequestParam("size") int size
     ) {
         //객체 생성
         System.out.println("도착핸나요?");
 
-        int perPage = 10;
-
-        Pageable pageable = PageRequest.of(page - 1, perPage, Sort.by("id").descending());
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
 
         Page<Outfit> outfits = outfitRepository.findOutfits(pageable);
 
@@ -84,7 +79,7 @@ public class OutfitController {
 //    }
 
     @Transactional
-    @PatchMapping("/api/delOutfit/{outfitId}")
+    @PatchMapping("/api/outfit/delOutfit/{outfitId}")
     public ResponseEntity deleteOutfit(
             @PathVariable("outfitId") int outfitId,
             @AuthenticationPrincipal CustomUserDetails userDetails
