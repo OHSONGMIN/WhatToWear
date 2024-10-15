@@ -63,8 +63,6 @@ public class OutfitController {
             @RequestParam("size") int size
     ) {
         //객체 생성
-        System.out.println("도착핸나요?");
-
         Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
 
         Page<Outfit> outfits = outfitRepository.findOutfits(pageable);
@@ -108,13 +106,22 @@ public class OutfitController {
 
     @GetMapping("/api/outfit/history")
     public ResponseEntity getHistory(
-            @AuthenticationPrincipal CustomUserDetails userDetails
+            @AuthenticationPrincipal CustomUserDetails userDetails,
+            @RequestParam("page") int page,
+            @RequestParam("size") int size
     ) {
 
         int memberId = memberRepository.findByEmail(userDetails.getUsername()).getId();
 
-        List<Outfit> outfits = outfitRepository.findByMemberIdOrderByIdDesc(memberId);
+        //객체 생성
+        Pageable pageable = PageRequest.of(page, size, Sort.by("id").descending());
+
+        Page<Outfit> outfits = outfitRepository.findByMemberIdOrderByIdDesc(pageable, memberId);
 
         return new ResponseEntity<>(outfits, HttpStatus.OK);
+
+        // List<Outfit> outfits = outfitRepository.findByMemberIdOrderByIdDesc(memberId);
+
+        // return new ResponseEntity<>(outfits, HttpStatus.OK);
     }
 }
