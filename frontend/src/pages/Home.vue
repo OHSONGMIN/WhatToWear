@@ -26,9 +26,6 @@
       </router-link>
     </div>
   </div>
-
-  <br><br>
-
 </template>
 
 <script>
@@ -58,6 +55,9 @@ export default {
   mounted() {
     window.addEventListener(`scroll`, this.scrollPagination);
     this.getData();
+  },
+  beforeUnmount() {
+    window.removeEventListener(`scroll`, this.scrollPagination);
   },
   methods: {
     async getData() {
@@ -192,7 +192,6 @@ export default {
     };
 
     getWeather();
-
 
     const modalStatus = ref(false); //반응형
 
