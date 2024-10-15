@@ -5,7 +5,7 @@
     </div>
 
     <div class="pagination">
-      <button @click="prevGroup" :disabled="state.pageGroup === 0">이전</button>
+      <button @click="prevGroup" v-show="state.pageGroup !== 0">이전</button>
 
       <button v-for="page in pageInCurrentGroup"
               :key="page"
@@ -14,7 +14,7 @@
         {{ page }}
       </button>
 
-      <button @click="nextGroup" :disabled="isLastGroup">다음</button>
+      <button @click="nextGroup" v-show="!isLastGroup">다음</button>
     </div>
   </div>
 </template>
@@ -115,18 +115,20 @@ button:hover {
   background-color: #ddd;
 }
 
-button:disabled {
-  background-color: #e0e0e0;
-  cursor: not-allowed;
-}
-
 button.active {
   background-color: #b0ab99;
   color: white;
   border-color: #b0ab99;
 }
 
+/*
+button:disabled {
+  background-color: #e0e0e0;
+  cursor: not-allowed;
+}
+
 button:disabled:hover {
   background-color: #e0e0e0;
 }
+*/
 </style>
