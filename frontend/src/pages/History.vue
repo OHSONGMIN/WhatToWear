@@ -95,5 +95,38 @@ export default {
 </script>
 
 <style scoped>
+.pagination {
+  display: flex;
+  justify-content: center;
+  margin-top: 20px;
+}
 
+button {
+  padding: 5px 10px;
+  margin: 0px 2px;
+  background-color: #F6F5F2;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  background-color: #ddd;
+}
+
+button:disabled {
+  background-color: #e0e0e0;
+  cursor: not-allowed;
+}
+
+button.active {
+  background-color: #b0ab99;
+  color: white;
+  border-color: #b0ab99;
+}
+
+button:disabled:hover {
+  background-color: #e0e0e0;
+}
 </style>
