@@ -41,7 +41,7 @@ export default {
     // 1번 그룹 -> 6, 7, 8, 9, 10
     const pageInCurrentGroup = computed(() => {
       const startPage = state.pageGroup * state.groupSize + 1;
-      const endPage = Math.min(startPage + state.groupSize - 1, state.totalPage);
+      const endPage = Math.min(startPage + state.groupSize - 1, state.totalPages);
       return Array.from({ length: endPage - startPage + 1 }, (_, i) => startPage + i)
     })
 
