@@ -1,4 +1,5 @@
 <template>
+  <div class="my-title">리뷰 관리</div>
   <div>
     <div class="col" v-for="outfit in state.history" :key="outfit.id">
       <Card :outfit="outfit" @deleted="load"/>
@@ -25,6 +26,7 @@ import {computed, reactive} from "vue";
 import Card from "@/components/Card.vue";
 
 export default {
+  name: "History",
   components: {Card},
   setup() {
     const state = reactive({
@@ -119,6 +121,12 @@ button.active {
   background-color: #b0ab99;
   color: white;
   border-color: #b0ab99;
+}
+
+.my-title {
+  padding: 5px;
+  margin: 5px;
+  text-align: center;
 }
 
 /*
