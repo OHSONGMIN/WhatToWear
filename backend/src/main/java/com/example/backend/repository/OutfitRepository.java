@@ -14,8 +14,13 @@ public interface OutfitRepository extends JpaRepository<Outfit, Integer> {
     @Query("SELECT o FROM Outfit o WHERE o.delStatus = 0")
     Page<Outfit> findOutfits(Pageable pageable);
 
+    // 마이페이지 페이징 전
+    // @Query("SELECT o FROM Outfit o WHERE o.delStatus = 0 AND o.memberId = :memberId ORDER BY o.id DESC")
+    // List<Outfit> findByMemberIdOrderByIdDesc(int memberId);
+
+    // 마이페이지 페이징
     @Query("SELECT o FROM Outfit o WHERE o.delStatus = 0 AND o.memberId = :memberId ORDER BY o.id DESC")
-    List<Outfit> findByMemberIdOrderByIdDesc(int memberId);
+    Page<Outfit> findByMemberIdOrderByIdDesc(Pageable pageable, int memberId);
 
     @Query("SELECT o FROM Outfit o WHERE o.memberId = :memberId ORDER BY o.id DESC")
     List<Outfit> findAllOutfitsByMemberId(int memberId);
