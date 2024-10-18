@@ -8,7 +8,11 @@ import com.example.backend.entity.Member;
 import com.example.backend.entity.Outfit;
 import com.example.backend.repository.MemberRepository;
 import com.example.backend.repository.OutfitRepository;
+import com.example.backend.repository.RefreshRepository;
 import com.example.backend.service.JwtService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -33,6 +37,8 @@ public class MyPageController {
     private MemberRepository memberRepository;
     @Autowired
     private BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    private RefreshRepository refreshRepository;
 
     @GetMapping("/api/account/getEmail")
     public ResponseEntity getEmail (
@@ -73,7 +79,8 @@ public class MyPageController {
     @PatchMapping("/api/account/withdraw")
     public ResponseEntity withdrawMember (
             @AuthenticationPrincipal CustomUserDetails userDetails,
-            @RequestBody WithdrawMemberDto eto
+            @RequestBody WithdrawMemberDto eto,
+            HttpServletResponse response
     ) {
         Member member = memberRepository.findByEmail(userDetails.getUsername());
         String password = member.getPassword();
@@ -86,8 +93,19 @@ public class MyPageController {
         member.setDelStatus(1);
         memberRepository.save(member);
 
-        // 탈퇴 회원의 refresh Token 제거
+        // 탈퇴 회원의 refresh token 제거
+        refreshRepository.deleteAllByEmail(member.getEmail());
 
+        // refresh token 쿠키 제거
+        Cookie cookie = new Cookie("refresh", null);
+        cookie.setMaxAge(0);
+        cookie.setPath("/");
+        cookie.setHttpOnly(true);
+
+        response.addCookie(cookie);
+        //response.setStatus(HttpServletResponse.SC_OK);
+//
+//        System.out.println("refresh??" + cookie.getValue());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }
