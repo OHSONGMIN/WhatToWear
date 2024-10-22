@@ -8,7 +8,7 @@
       <div class="right">
         <div v-if="isLoggedIn" class="nav-item">
           <div v-if="getMemberId !== 1">
-            <router-link to="/history">마이페이지</router-link>
+            <router-link to="/myPage">마이페이지</router-link>
           </div>
           <div v-else>
             <router-link to="/admin">[관리자 페이지]</router-link>
