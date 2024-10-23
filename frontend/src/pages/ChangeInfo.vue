@@ -6,7 +6,7 @@
 
         <div class="form-changeInfo mb-3">
           <div class="form-floating">
-            <input type="email" class="form-control" id="floatingInput" placeholder="기존 비밀번호"
+            <input type="password" class="form-control" id="floatingInput" placeholder="기존 비밀번호"
                    @keyup.enter="submit()"
                    v-model="state.form.oriPassword">
             <label for="floatingInput">기존 비밀번호</label>
@@ -40,6 +40,8 @@
 
 <script>
 import {reactive} from "vue";
+import axios from "axios";
+import router from "@/scripts/router";
 
 export default {
   name: "ChangeInfo",
@@ -51,7 +53,7 @@ export default {
         passwordConfirm: ""
       },
       equalsPassword: true,
-    })
+    });
 
     const checkPassword = () => {
 
@@ -59,9 +61,28 @@ export default {
       state.equalsPassword = (state.form.password === state.form.passwordConfirm);
     }
 
-    const submit = () => {
+    const submit = async () => {
 
+      if (!state.equalsPassword) {
+        window.alert("비밀번호가 일치하지 않습니다.");
+        return;
+      }
+
+      if (state.form.password.length < 6) {
+        window.alert("비밀번호는 최소 6자 이상이어야 합니다.");
+        return;
+      }
+
+      try {
+        await axios.post("/api/account/changeInfo", state.form);
+        window.alert("성공적으로 변경되었습니다!")
+        await router.push({path: "/myPage"});
+      }
+      catch(error) {
+        window.alert("비밀번호를 변경하지 못했습니다. 다시 확인해주세요.")
+      }
     }
+
     return {state, checkPassword, submit}
   }
 }
@@ -104,5 +125,9 @@ export default {
 .btn-primary:hover {
   background-color: #B0AB99;
   border-color: #B0AB99;
+}
+
+.badge-danger {
+  color: red;
 }
 </style>
