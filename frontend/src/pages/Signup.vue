@@ -85,10 +85,9 @@ export default {
       }
 
       try {
-        //const res = await axios.post("/api/signup", state.form);
         await axios.post("/api/main/signup", state.form);
         window.alert("회원가입 성공!")
-        router.push({path: "/login"});
+        await router.push({path: "/login"});
       }
       catch (error) {
         window.alert("회원 가입 실패! 다시 시도해주세요.");
@@ -178,7 +177,6 @@ export default {
   border-radius: 5px;
   padding: 10px;
   font-size: 0.9rem;
-
 }
 
 .btn-primary {
