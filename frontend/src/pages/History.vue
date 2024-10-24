@@ -1,5 +1,7 @@
 <template>
-  <div class="my-title">리뷰 관리</div>
+  <div class="my-title">
+    <h6>내가 작성한 리뷰 목록입니다</h6>
+  </div>
   <div>
     <div class="col" v-for="outfit in state.history" :key="outfit.id">
       <Card :outfit="outfit" @deleted="load"/>
@@ -124,9 +126,9 @@ button.active {
 }
 
 .my-title {
-  padding: 5px;
-  margin: 5px;
+  margin: 20px 0 15px 0;
   text-align: center;
+  color: #333333;
 }
 
 /*
