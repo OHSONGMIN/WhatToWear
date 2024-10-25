@@ -40,6 +40,7 @@ import store from "@/scripts/store";
 // import {jwtDecode} from "jwt-decode";
 
 export default {
+  name: "Login",
   computed: {
     ...mapGetters([`isLoggedIn`]), //Vuex의 isLoggedIn 상태 사용
   },
@@ -70,6 +71,7 @@ export default {
 
               const { memberId } = userInfoResponse.data;
               store.dispatch(`setId`, memberId);
+              console.log("memberId는....." + memberId);
 
               if (memberId === 1) {
 
@@ -106,9 +108,13 @@ export default {
 
 
       }).catch((error) => {
-        window.alert("오류가 발생했습니다. 다시 시도해주세요.");
+        // if (error.response && error.response.status === 401) {
+        //   window.alert("로그인 정보가 없습니다. 다시 확인해 주세요.")
+        // }
+        // else {
+        //   window.alert("오류가 발생했습니다. 다시 시도해주세요.");
+        // }
         console.log(error);
-
       })
     }
 
