@@ -1,9 +1,11 @@
 package com.example.backend.repository;
 
 import com.example.backend.entity.Outfit;
+import jakarta.transaction.Transactional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDateTime;
@@ -32,4 +34,9 @@ public interface OutfitRepository extends JpaRepository<Outfit, Integer> {
 
     @Query("SELECT o FROM Outfit o ORDER BY o.id DESC")
     List<Outfit> findAllOutfits();
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE Outfit o SET o.delStatus = 1 WHERE o.memberId = :memberId")
+    void deleteByMemberId(int memberId);
 }

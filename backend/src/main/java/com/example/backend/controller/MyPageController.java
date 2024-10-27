@@ -39,6 +39,8 @@ public class MyPageController {
     private BCryptPasswordEncoder bCryptPasswordEncoder;
     @Autowired
     private RefreshRepository refreshRepository;
+    @Autowired
+    private OutfitRepository outfitRepository;
 
     @GetMapping("/api/account/getEmail")
     public ResponseEntity getEmail (
@@ -92,6 +94,9 @@ public class MyPageController {
 
         member.setDelStatus(1);
         memberRepository.save(member);
+
+        // 탈퇴 회원가 작성한 리뷰 삭제 처리 (delStatus = 1)
+        outfitRepository.deleteByMemberId(member.getId());
 
         // 탈퇴 회원의 refresh token 제거
         refreshRepository.deleteAllByEmail(member.getEmail());
