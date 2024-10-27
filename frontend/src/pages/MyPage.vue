@@ -3,7 +3,7 @@
     <div class="empty-box"></div>
     <div class="content my-text">
       <span>로그인 정보</span>
-      <span>email</span>
+      <span class="my-email">{{ email }}</span>
     </div>
     <div class="empty-box"></div>
     <router-link to="/history" class="my-text">
@@ -12,14 +12,14 @@
         <span>></span>
       </div>
     </router-link>
-    <router-link to="/" class="my-text">
+    <router-link to="/changeInfo" class="my-text">
       <div class="content no-top-border">
         <span>비밀번호 수정</span>
         <span>></span>
       </div>
     </router-link>
     <div class="empty-box"></div>
-    <router-link to="/history" class="my-text">
+    <router-link to="/withdrawMember" class="my-text">
       <div class="content">
         <span>회원 탈퇴</span>
         <span>></span>
@@ -29,9 +29,25 @@
 </template>
 
 <script>
+import axios from "axios";
+import {ref} from "vue";
+
 export default {
   name: "MyPage",
+  setup() {
+    const email = ref("");
 
+    const getEmail = () => {
+      axios.get("/api/account/getEmail")
+          .then((res) => {
+        email.value = res.data;
+      })
+    };
+
+    getEmail();
+
+    return { email }
+  },
 }
 </script>
 
@@ -64,4 +80,7 @@ export default {
   width: 100%;
 }
 
+.my-email {
+  color: #EB5353;
+}
 </style>
