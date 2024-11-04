@@ -58,46 +58,6 @@ public class AccountController {
 
     }
 
-    @PostMapping("/api/account/loginnnnnnnnnn")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> params,
-                                HttpServletResponse res) {
-        Member member = memberRepository.findByEmailAndPassword(params.get("email"), params.get("password"));
-
-        if (member != null) { //등록된 회원임
-
-            //JwtService 구현 후
-            int id = member.getId();
-            String token = jwtService.getToken("id", id);
-
-            Cookie cookie = new Cookie("token", token);
-            cookie.setHttpOnly(true); //js로 접근할 수 없도록
-            //cookie.setPath("/");
-
-            res.addCookie(cookie);
-
-            Map<String, Object> response = new HashMap<>();
-            response.put("id", id);
-
-            //return ResponseEntity.ok().build();
-            return new ResponseEntity<>(response, HttpStatus.OK); //라고 하면 응답값으로 id를 줄 수 있다
-
-        }
-
-        //로그인 실패했을 때
-        throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-    }
-
-    @PostMapping("/api/account/logoutttttt")
-    public ResponseEntity logout(HttpServletResponse res) {
-        Cookie cookie = new Cookie("token", null);
-        cookie.setPath("/");
-        cookie.setMaxAge(0);
-
-        res.addCookie(cookie);
-        return new ResponseEntity<>(HttpStatus.OK);
-    }
-
-
     @GetMapping("/api/account/check")
     public ResponseEntity check(@CookieValue(value = "token", required = false) String token) {
         Claims claims = jwtService.getClaims(token);
