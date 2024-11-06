@@ -1,8 +1,10 @@
 package com.example.backend.controller;
 
+import com.example.backend.entity.Item;
 import com.example.backend.entity.Member;
 import com.example.backend.entity.Outfit;
 import com.example.backend.repository.AdminRepository;
+import com.example.backend.repository.ItemRepository;
 import com.example.backend.repository.MemberRepository;
 import com.example.backend.repository.OutfitRepository;
 import jakarta.transaction.Transactional;
@@ -23,12 +25,13 @@ public class AdminController {
     private OutfitRepository outfitRepository;
     @Autowired
     private MemberRepository memberRepository;
+    @Autowired
+    private ItemRepository itemRepository;
 
     @GetMapping("/api/admin/searchMember")
     public ResponseEntity searchMember(
             @RequestParam("email") String email
-            ) {
-
+    ) {
         List<Member> members = adminRepository.findByKeyword(email);
 
         return new ResponseEntity<>(members, HttpStatus.OK);
@@ -45,7 +48,7 @@ public class AdminController {
     }
 
     @PatchMapping("/api/admin/withdraw/{email}")
-    public ResponseEntity withdrawMember(
+    public ResponseEntity adminWithdrawMember(
             @PathVariable("email") String email
     ) {
         Member member = adminRepository.findByEmail(email);
@@ -71,14 +74,10 @@ public class AdminController {
     public ResponseEntity getMemberOutfit(
             @RequestParam("startDate") String startDate,
             @RequestParam("endDate") String endDate
-
     ) {
-        //System.out.println(startDate + "부터요 언제까지?" + endDate);
-
         LocalDateTime localStartDate = LocalDateTime.of(Integer.parseInt(startDate.substring(0, 4)), Integer.parseInt(startDate.substring(5, 7)), Integer.parseInt(startDate.substring(8, 10)), 0, 0);
         LocalDateTime localEndDate = LocalDateTime.of(Integer.parseInt(endDate.substring(0, 4)), Integer.parseInt(endDate.substring(5, 7)), Integer.parseInt(endDate.substring(8, 10)), 23, 59, 59);
 
-        //System.out.println(localStartDate + " " + localEndDate);
 
         List<Outfit> outfits = outfitRepository.findOutfitsRange(localStartDate, localEndDate);
 
@@ -86,11 +85,26 @@ public class AdminController {
     }
 
     @GetMapping("/api/admin/outfits")
-    public ResponseEntity getAllOutfits () {
+    public ResponseEntity getAllOutfits() {
 
         List<Outfit> outfits = outfitRepository.findAllOutfits();
 
         return new ResponseEntity<>(outfits, HttpStatus.OK);
     }
 
+    @PostMapping("/api/admin/item")
+    public ResponseEntity saveItem(
+            @RequestParam("category") int category,
+            @RequestParam("name") String name
+    ) {
+        Item newItem = new Item();
+
+        newItem.setCategory(category);
+        newItem.setName(name);
+        newItem.setActiveStatus(1);
+
+        itemRepository.save(newItem);
+
+        return new ResponseEntity<>(HttpStatus.OK);
+    }
 }
