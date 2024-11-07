@@ -93,6 +93,7 @@ public class SecurityConfig{
 
         http
                 .authorizeHttpRequests((auth) -> auth
+                        .requestMatchers("/static/**", "/", "/index.html", "/favicon.ico", "/js/**", "/css/**", "/img/**", "/fonts/**").permitAll()
                         .requestMatchers("/api/main/**").permitAll()
                         .requestMatchers("/api/account/**", "/api/outfit/**").hasAnyRole("USER", "ADMIN")
                         .requestMatchers("/api/admin/**").hasRole("ADMIN")
