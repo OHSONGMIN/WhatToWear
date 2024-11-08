@@ -50,8 +50,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
             return authenticationManager.authenticate(authToken);
 
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
@@ -80,18 +79,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         }
     }
 
-    /*
-    protected String obtainEmail(HttpServletRequest request) {
-        return request.getParameter("email");
-    }
-
-    */
-
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) {
 
-
-        //유저 정보 - username, email 해결해야함
         CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
         String username = customUserDetails.getUsername(); //사실 email
         //String username = authentication.getName(); //편리하지만 데이터를 email로 저장했기 때문에 사용할 수 없을 듯...
@@ -102,8 +92,8 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String role = auth.getAuthority();
 
         //토큰 생성
-        String access = jwtUtil.createJwt("access", username, role, 60000L);
-        String refresh = jwtUtil.createJwt("refresh", username, role, 86400000L);
+        String access = jwtUtil.createJwt("access", username, role, 300000L); // 5분
+        String refresh = jwtUtil.createJwt("refresh", username, role, 86400000L); // 24시간
 
         //Refresh 토큰 DB에 저장
         addRefreshEntity(username, refresh, 86400000L);
@@ -112,35 +102,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         response.setHeader("access", access);
         response.addCookie(createCookie("refresh", refresh));
         response.setStatus(HttpStatus.OK.value());
-
-//        -----------------AccessToken만 발급하는 코드----------------------
-//        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
-//        Integer id = customUserDetails.getMember().getId();
-//        String username = customUserDetails.getUsername(); //사실 email
-//
-//
-//        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-//        Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
-//        GrantedAuthority auth = iterator.next();
-//
-//        String role = auth.getAuthority();
-//
-//        //일단 되긴 함~~~~ 성공
-//        //username 변수를 왜 그냥 두었냐면 jwtUtil 때문에.. 어떻게 처리할지 생각
-//        String token = jwtUtil.createJwt(id, username, role, 60*60*10*1000L);
-//
-//        Cookie cookie = new Cookie("id", id.toString());
-//        cookie.setHttpOnly(true);
-//        //cookie.setSecure(true); // Only Https
-//        cookie.setPath("/");
-//        cookie.setMaxAge(60*60*10);
-//
-//        response.addCookie(cookie);
-//
-//        //Authorization: Bearer 인증토큰string
-//        response.addHeader("Authorization", "Bearer " + token);
-//
-//        System.out.println("success~~~~~~~~~~~~~~~~~~~~~~~~");
     }
 
     private void addRefreshEntity(String email, String refresh, Long expiredMs) {
@@ -158,17 +119,13 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException {
 
-        System.out.println("fail~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+        // System.out.println("fail~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
 
-        if (failed.getMessage().equals("Member is deactivated")) {
+        if (failed.getMessage().equals("Member is deactivated")) { // 탈퇴 회원
             response.setStatus(499); // 커스텀 상태 코드
-        }
-
-        else if (failed instanceof UsernameNotFoundException) {
+        } else if (failed instanceof UsernameNotFoundException) {
             response.setStatus(499);
-        }
-
-        else {
+        } else {
             response.setStatus(499);
         }
     }
@@ -176,9 +133,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     private Cookie createCookie(String key, String value) {
 
         Cookie cookie = new Cookie(key, value);
-        cookie.setMaxAge(24*60*60);
+        cookie.setMaxAge(24 * 60 * 60);
         //cookie.setSecure(true); //https 통신을 진행할 경우
-        //cookie.setPath("/");
+        cookie.setPath("/");
         cookie.setHttpOnly(true);
 
         return cookie;

@@ -11,12 +11,4 @@ public class MemberInfoDto {
 
         this.memberId = memberId;
     }
-    //private String role;
-
-
-//    public MemberInfoDto(int memberId, String role) {
-//
-//        this.memberId = memberId;
-//        this.role = role;
-//    }
 }

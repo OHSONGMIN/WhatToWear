@@ -5,7 +5,6 @@ import com.example.backend.dto.OutfitDto;
 import com.example.backend.entity.Outfit;
 import com.example.backend.repository.MemberRepository;
 import com.example.backend.repository.OutfitRepository;
-import com.example.backend.service.JwtService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -16,18 +15,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
 
 
 @RestController
 public class OutfitController {
 
-    @Autowired
-    JwtService jwtService;
     @Autowired
     private OutfitRepository outfitRepository;
     @Autowired
@@ -41,7 +35,6 @@ public class OutfitController {
         int memberId = memberRepository.findByEmail(userDetails.getUsername()).getId();
         Outfit newOutfit = new Outfit();
 
-        //1. outfits DB에 먼저 담고 + 나중에 지역, 온도도 추가해야함
         newOutfit.setMemberId(memberId);
         newOutfit.setReview(dto.getReview());
         newOutfit.setRegdate(LocalDateTime.now());

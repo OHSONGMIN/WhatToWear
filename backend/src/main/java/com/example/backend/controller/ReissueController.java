@@ -38,12 +38,14 @@ public class ReissueController {
 
         //get refresh token
         String refresh = null;
+
         Cookie[] cookies = request.getCookies(); // 모든 쿠키를 쿠키 배열에 담음
         for (Cookie cookie : cookies) { // 순회
 
             if (cookie.getName().equals("refresh")) {
 
                 refresh = cookie.getValue();
+
             }
         }
 
@@ -55,6 +57,7 @@ public class ReissueController {
 
         //refresh token이 있다면
         //expired check
+
         try {
             jwtUtil.isExpired(refresh);
         }
@@ -62,6 +65,7 @@ public class ReissueController {
 
             //refresh token 만료
             //response status code
+
             return new ResponseEntity<>("refresh token expired", HttpStatus.BAD_REQUEST);
         }
 

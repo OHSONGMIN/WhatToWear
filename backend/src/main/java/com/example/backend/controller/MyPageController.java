@@ -2,37 +2,24 @@ package com.example.backend.controller;
 
 import com.example.backend.dto.ChangeInfoDto;
 import com.example.backend.dto.CustomUserDetails;
-import com.example.backend.dto.OutfitDto;
 import com.example.backend.dto.WithdrawMemberDto;
 import com.example.backend.entity.Member;
-import com.example.backend.entity.Outfit;
 import com.example.backend.repository.MemberRepository;
 import com.example.backend.repository.OutfitRepository;
 import com.example.backend.repository.RefreshRepository;
-import com.example.backend.service.JwtService;
 import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDateTime;
-
-
 @RestController
 public class MyPageController {
 
-    @Autowired
-    JwtService jwtService;
     @Autowired
     private MemberRepository memberRepository;
     @Autowired
@@ -108,9 +95,6 @@ public class MyPageController {
         cookie.setHttpOnly(true);
 
         response.addCookie(cookie);
-        //response.setStatus(HttpServletResponse.SC_OK);
-//
-//        System.out.println("refresh??" + cookie.getValue());
 
         return new ResponseEntity<>(HttpStatus.OK);
     }

@@ -3,7 +3,6 @@ package com.example.backend.service;
 import com.example.backend.dto.CustomUserDetails;
 import com.example.backend.entity.Member;
 import com.example.backend.repository.MemberRepository;
-import com.example.backend.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

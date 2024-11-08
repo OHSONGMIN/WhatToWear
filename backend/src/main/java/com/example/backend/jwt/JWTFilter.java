@@ -29,8 +29,11 @@ public class JWTFilter extends OncePerRequestFilter {
 
         // "/api/main/reissue" 라면 다음 필터로 넘김
         String requestURI = request.getRequestURI();
+
         if ("/api/main/reissue".equals(requestURI)) {
+
             filterChain.doFilter(request, response);
+
             return;
         }
 
@@ -89,69 +92,12 @@ public class JWTFilter extends OncePerRequestFilter {
         member.setRole(role);
         CustomUserDetails customUserDetails = new CustomUserDetails(member);
 
-//        UserEntity userEntity = new UserEntity();
-//        userEntity.setUsername(username);
-//        userEntity.setRole(role);
-//        CustomUserDetails customUserDetails = new CustomUserDetails(userEntity);
-
         Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
 
-        //세선에 사용자 등록(유저 세션 생성)
+        //세션에 사용자 등록(유저 세션 생성)
         SecurityContextHolder.getContext().setAuthentication(authToken);
 
         filterChain.doFilter(request, response);
 
-        /*
-
-        //request에서 Authorization 헤더를 찾음
-        String authorization = request.getHeader("Authorization");
-
-        //Authorization 헤더 검증
-        if (authorization == null || !authorization.startsWith("Bearer ")) {
-
-            System.out.println("JWTFilter - token null");
-            filterChain.doFilter(request, response);
-
-            //조건이 해당되면 메소드 종료
-            return;
-        }
-
-        System.out.println("authorization now - token 있음");
-
-        //Bearer 부분 제거 후 순수 토큰만 획득
-        String token = authorization.split(" ")[1];
-
-        //토큰 소멸 시간 검증
-        if (jwtUtil.isExpired(token)) {
-
-            System.out.println("JWTFilter - token expired");
-            filterChain.doFilter(request, response);
-
-            //조건이 해당되면 메소드 종료 (필수)
-            return;
-        }
-
-        //토큰에서 username(사실 email)과 role 획득
-        String username = jwtUtil.getUsername(token); //사실 email
-        String role = jwtUtil.getRole(token);
-
-        //Member Entity 생성하여 값 set
-        Member member = new Member();
-        member.setEmail(username);
-        member.setPassword("temppassword"); //임시 비밀번호, DB에 요청할 필요 없음
-        member.setRole(role);
-
-        CustomUserDetails customUserDetails = new CustomUserDetails(member);
-
-        //스프링 시큐리티 인증 토큰 생성
-        Authentication authToken = new UsernamePasswordAuthenticationToken(customUserDetails, null, customUserDetails.getAuthorities());
-
-        //세선에 사용자 등록(유저 세션 생성)
-        SecurityContextHolder.getContext().setAuthentication(authToken);
-
-        //받았던 request, response를 그다음 필터에게 넘김
-        filterChain.doFilter(request, response);
-
-         */
     }
 }
