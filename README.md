@@ -30,3 +30,6 @@
 
 ## 🔍 ERD
 
+![스크린샷 2024-12-05 212618](https://github.com/user-attachments/assets/d825a75c-02d6-4cbf-906f-43e9822e9bc6)
+
+
