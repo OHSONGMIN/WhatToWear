@@ -49,7 +49,34 @@
 
 
   JWT 필터에서 재발급 API 경로를 예외 처리하여 해당 경로에 대해서 토큰 검증을 생략하도록 설계하였습니다. 이를 통해 재발급 요청이 JWT 검증 없이 다음 필터로 넘어갈 수 있게 되었고 결과적으로 만료된 토큰 상황에서도 재발급 로직이 정상적으로 작동하게 되었습니다.
+```
+//  Axios Interceptor
+//  401 에러 && 재시도가 아닌 경우 --> 토큰 재발급 요청
+if (status === 401 && !originalRequest._retry) {
+  originalRequest._retry = true;
 
+  try {
+    const reissueResponse = await axios.post(`/api/main/reissue`);
+
+    (생략)
+  }
+  catch {
+    (생략)
+  }
+}
+```
+```
+//  JWT 필터
+//  요청 URL가 "/api/main/reissue"인 경우 --> 다음 필터로 넘김
+String requestURI = request.getRequestURI();
+
+if ("/api/main/reissue".equals(requestURI)) {
+
+  filterChain.doFilter(request, response);
+
+  return;
+}
+```
 * 결과
 
 
