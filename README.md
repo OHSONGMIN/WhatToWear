@@ -179,3 +179,7 @@ if ("/api/main/reissue".equals(requestURI)) {
 |리뷰 작성 페이지|마이페이지|내가 작성한 리뷰 목록|
 |---|---|---|
 |![Image](https://github.com/user-attachments/assets/df3ba9e5-59ba-4369-8dd9-a37f4907cb3b)|![Image](https://github.com/user-attachments/assets/2ecdad15-0d2d-4b7d-ae4e-ff0f37ea0cec)|![Image](https://github.com/user-attachments/assets/f90eccfb-c071-4b19-82dc-304d40026345)|
+
+|관리자 페이지|회원 관리-"My"로 검색한 결과|회원 관리-특정 회원 클릭시|
+|---|---|---|
+|![Image](https://github.com/user-attachments/assets/86a2400b-f498-46d9-b18d-6d4e2a2df690)|![Image](https://github.com/user-attachments/assets/1d22982b-78c7-4968-84d7-9b2c4417c5b3)|![Image](https://github.com/user-attachments/assets/66a5efe8-f838-49a2-b2a0-0c7787dedcce)|
