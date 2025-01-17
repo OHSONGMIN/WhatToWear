@@ -131,49 +131,6 @@ if ("/api/main/reissue".equals(requestURI)) {
 ├─repository
 │      AdminRepository.java
 │      ItemRepository.java
-│      MemberRepository.java
-│      OutfitRepository.java
-│      RefreshRepository.java
-│      
-└─service
-        CustomUserDetailsService.java
-        GridService.java
-```
-        
-```
-//  Frontend
-│  
-│  App.vue
-│  main.js
-│  
-├─components
-│      Card.vue
-│      Footer.vue
-│      Header.vue
-│      Weather.vue
-│      Write.vue
-│      
-├─pages
-│      Admin.vue
-│      AdminItem.vue
-│      AdminMember.vue
-│      AdminMemberInfo.vue
-│      AdminOutfit.vue
-│      ChangeInfo.vue
-│      History.vue
-│      Home.vue
-│      Login.vue
-│      MyPage.vue
-│      Signup.vue
-│      WithdrawMember.vue
-│      
-└─scripts
-        router.js
-        store.js
-```
-
-## 📌 주요 기능
-
-|메인 페이지|로그인 페이지|회원가입|
+│   록|
 |---|---|---|
-|![Image](https://github.com/user-attachments/assets/730db3c7-6498-48f6-a079-f69e05ae253e)|![Image](https://github.com/user-attachments/assets/9d585768-ab8e-4e3e-bcc1-043c07311dd3)|![Image](https://github.com/user-attachments/assets/b0760223-4af5-4aac-aeae-fc8bf4fabfca)|
+|![Image](https://github.com/user-attachments/assets/69fe5a52-f0f2-41e9-91d0-37c1b6639e56)|![Image](https://github.com/user-attachments/assets/2ecdad15-0d2d-4b7d-ae4e-ff0f37ea0cec)|![Image](https://github.com/user-attachments/assets/f90eccfb-c071-4b19-82dc-304d40026345)|
