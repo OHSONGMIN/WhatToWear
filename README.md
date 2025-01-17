@@ -174,3 +174,6 @@ if ("/api/main/reissue".equals(requestURI)) {
 
 ## 📌 주요 기능
 
+|메인 페이지|로그인 페이지|회원가입|
+|---|---|---|
+|![Image](https://github.com/user-attachments/assets/730db3c7-6498-48f6-a079-f69e05ae253e)|![Image](https://github.com/user-attachments/assets/9d585768-ab8e-4e3e-bcc1-043c07311dd3)|![Image](https://github.com/user-attachments/assets/b0760223-4af5-4aac-aeae-fc8bf4fabfca)|
