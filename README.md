@@ -85,6 +85,92 @@ if ("/api/main/reissue".equals(requestURI)) {
 
 ## 📋 프로젝트 구조
 
+```
+//  Backend
+│  
+├─config
+│      CacheConfig.java
+│      CorsMvcConfig.java
+│      SecurityConfig.java
+│      WebConfig.java
+│      
+├─controller
+│      AccountController.java
+│      AdminController.java
+│      ItemController.java
+│      MyPageController.java
+│      OutfitController.java
+│      ReissueController.java
+│      SignUpController.java
+│      WeatherController.java
+│      
+├─dto
+│      ChangeInfoDto.java
+│      CustomUserDetails.java
+│      ItemDto.java
+│      MemberDto.java
+│      MemberInfoDto.java
+│      OrderDto.java
+│      OutfitDto.java
+│      SearchKeywordDto.java
+│      WeatherDto.java
+│      WithdrawMemberDto.java
+│      
+├─entity
+│      Item.java
+│      Member.java
+│      Outfit.java
+│      Refresh.java
+│      
+├─jwt
+│      CustomLogoutFilter.java
+│      JWTFilter.java
+│      JWTUtil.java
+│      LoginFilter.java
+│      
+├─repository
+│      AdminRepository.java
+│      ItemRepository.java
+│      MemberRepository.java
+│      OutfitRepository.java
+│      RefreshRepository.java
+│      
+└─service
+        CustomUserDetailsService.java
+        GridService.java
+```
+        
+```
+//  Frontend
+│  
+│  App.vue
+│  main.js
+│  
+├─components
+│      Card.vue
+│      Footer.vue
+│      Header.vue
+│      Weather.vue
+│      Write.vue
+│      
+├─pages
+│      Admin.vue
+│      AdminItem.vue
+│      AdminMember.vue
+│      AdminMemberInfo.vue
+│      AdminOutfit.vue
+│      ChangeInfo.vue
+│      History.vue
+│      Home.vue
+│      Login.vue
+│      MyPage.vue
+│      Signup.vue
+│      WithdrawMember.vue
+│      
+└─scripts
+        router.js
+        store.js
+```
 
 ## 📌 주요 기능
 
