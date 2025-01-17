@@ -174,7 +174,7 @@ if ("/api/main/reissue".equals(requestURI)) {
 ## 📌 주요 기능
 |메인 페이지|로그인 페이지|회원가입|
 |---|---|---|
-|![Image](https://github.com/user-attachments/assets/aa19319d-adca-4265-b8c1-93fe85fafdf8)|![Image](https://github.com/user-attachments/assets/4fd35b06-439d-46bb-90af-388957ea2821)|![Image](https://github.com/user-attachments/assets/63110bd2-e193-479a-95e1-ece1f97e2a8e)|
+|![Image](https://github.com/user-attachments/assets/09380a4b-cbb5-4a8c-af30-3062512f4c8f)|![Image](https://github.com/user-attachments/assets/4fd35b06-439d-46bb-90af-388957ea2821)|![Image](https://github.com/user-attachments/assets/63110bd2-e193-479a-95e1-ece1f97e2a8e)|
 
 |리뷰 작성 페이지|마이페이지|내가 작성한 리뷰 목록|
 |---|---|---|
