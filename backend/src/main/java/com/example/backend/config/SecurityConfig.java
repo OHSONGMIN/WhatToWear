@@ -21,6 +21,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
 import java.util.Collections;
+import java.util.List;
 
 
 @Configuration
@@ -62,6 +63,8 @@ public class SecurityConfig{
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http, AuthenticationManager authenticationManager) throws Exception {
 
+        http.csrf(csrf -> csrf.disable());
+
         http
                 .cors((corsCustomizer -> corsCustomizer.configurationSource(new CorsConfigurationSource() {
 
@@ -70,45 +73,39 @@ public class SecurityConfig{
 
                         CorsConfiguration configuration = new CorsConfiguration();
 
-                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000")); //포트 허용
-                        configuration.setAllowedMethods(Collections.singletonList("*")); //허용할 메서드
+//                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000")); //포트 허용
+//                        configuration.setAllowedOrigins(Collections.singletonList("https://whattowear.store"));
+                        configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://whattowear.store"));
+//                        configuration.setAllowedOriginPatterns(List.of("*"));
+                        configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH"));
+                        configuration.setAllowedHeaders(List.of("*"));
                         configuration.setAllowCredentials(true);
-                        configuration.setAllowedHeaders(Collections.singletonList("*")); //허용할 헤더
                         configuration.setMaxAge(3600L); //허용 시간
-
-                        configuration.setExposedHeaders(Collections.singletonList("Authorization")); //Authorization 헤더도 허용
+                        
+//                        configuration.setExposedHeaders(Collections.singletonList("Authorization")); //Authorization 헤더도 허용
 
                         return configuration;
                     }
                 })));
 
-        http
-                .csrf((auth) -> auth.disable());
+        http.formLogin((auth) -> auth.disable());
 
-        http
-                .formLogin((auth) -> auth.disable());
+        http.httpBasic((auth) -> auth.disable());
 
-        http
-                .httpBasic((auth) -> auth.disable());
+        http.authorizeHttpRequests((auth) -> auth
+                    .requestMatchers("/fonts/**", "/static/**", "/", "/index.html", "/favicon.ico", "/js/**", "/css/**", "/img/**").permitAll()
+                    .requestMatchers("/api/main/**").permitAll()
+                    .requestMatchers("/api/account/**", "/api/outfit/**").hasAnyRole("USER", "ADMIN")
+                    .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                    .anyRequest().permitAll()); // 2.17 추가
 
-        http
-                .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/static/**", "/", "/index.html", "/favicon.ico", "/js/**", "/css/**", "/img/**", "/fonts/**").permitAll()
-                        .requestMatchers("/api/main/**").permitAll()
-                        .requestMatchers("/api/account/**", "/api/outfit/**").hasAnyRole("USER", "ADMIN")
-                        .requestMatchers("/api/admin/**").hasRole("ADMIN")
-                        .anyRequest().authenticated()); //나머지 요청은 인증 필요
-
-        http
-                .addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
+        http.addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
 
         String loginUrl = "/api/main/login";
 
-        http
-                .addFilterAt(new LoginFilter(authenticationManager, jwtUtil, loginUrl, refreshRepository), UsernamePasswordAuthenticationFilter.class);
+        http.addFilterAt(new LoginFilter(authenticationManager, jwtUtil, loginUrl, refreshRepository), UsernamePasswordAuthenticationFilter.class);
 
-        http
-                .addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository), LoginFilter.class);
+        http.addFilterBefore(new CustomLogoutFilter(jwtUtil, refreshRepository), LoginFilter.class);
 
         // 세션 설정
         http
