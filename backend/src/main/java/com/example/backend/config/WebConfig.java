@@ -15,6 +15,7 @@ import java.io.IOException;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
+
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
 
@@ -29,4 +30,24 @@ public class WebConfig implements WebMvcConfigurer {
                     }
                 });
     }
+
+    // 추가 25.02.17
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        registry.addViewController("/").setViewName("forward:/index.html");
+        registry.setOrder(Ordered.HIGHEST_PRECEDENCE);
+    }
+
+    // 추가 25.02.17
+/*
+    @Override
+    public void addCorsMappings(CorsRegistry registry) {
+        registry.addMapping("/**")
+                .allowedOrigins("https://whattowear.store", "http://localhost:3000") // 프론트엔드 주소
+                .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH")
+                .allowedHeaders("*")
+                .allowCredentials(true);
+    }
+*/
+
 }
