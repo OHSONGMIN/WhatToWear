@@ -73,7 +73,7 @@ public class SecurityConfig{
 
                         CorsConfiguration configuration = new CorsConfiguration();
 
-//                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000")); //포트 허용
+//                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000"));
 //                        configuration.setAllowedOrigins(Collections.singletonList("https://whattowear.store"));
                         configuration.setAllowedOrigins(List.of("http://localhost:3000", "https://whattowear.store"));
 //                        configuration.setAllowedOriginPatterns(List.of("*"));
@@ -81,7 +81,7 @@ public class SecurityConfig{
                         configuration.setAllowedHeaders(List.of("*"));
                         configuration.setAllowCredentials(true);
                         configuration.setMaxAge(3600L); //허용 시간
-                        
+
 //                        configuration.setExposedHeaders(Collections.singletonList("Authorization")); //Authorization 헤더도 허용
 
                         return configuration;
@@ -98,6 +98,7 @@ public class SecurityConfig{
                     .requestMatchers("/api/account/**", "/api/outfit/**").hasAnyRole("USER", "ADMIN")
                     .requestMatchers("/api/admin/**").hasRole("ADMIN")
                     .anyRequest().permitAll()); // 2.17 추가
+
 
         http.addFilterBefore(new JWTFilter(jwtUtil), LoginFilter.class);
 
